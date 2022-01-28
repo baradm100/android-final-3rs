@@ -99,9 +99,7 @@ public class MainActivity extends AppCompatActivity {
             emailTextEdit.setError("Email is a required field");
             isValid = false;
             emailTextEdit.requestFocus();
-        }
-
-        if (!Patterns.EMAIL_ADDRESS.matcher(emailTextEdit.getText().toString()).matches()) {
+        } else if (!Patterns.EMAIL_ADDRESS.matcher(emailTextEdit.getText().toString()).matches()) {
             emailTextEdit.setError("Email must be in a valid format");
             isValid = false;
             emailTextEdit.requestFocus();
