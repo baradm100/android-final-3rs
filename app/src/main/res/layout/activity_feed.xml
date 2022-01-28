@@ -25,4 +25,25 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/wellcomeMessage" />
+
+    <Button
+        android:id="@+id/loadDataButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="handleLoadData"
+        android:text="load data"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/logoffButton" />
+
+    <Button
+        android:id="@+id/createDataButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:onClick="handleCreateData"
+        android:text="Create Data"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/loadDataButton" />
 </androidx.constraintlayout.widget.ConstraintLayout>
