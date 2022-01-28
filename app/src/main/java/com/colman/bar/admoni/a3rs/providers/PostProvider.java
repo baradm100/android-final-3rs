@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 public class PostProvider {
-    //    private static final FirebaseFirestore db = FirebaseFirestore.getInstance();
+
     @RequiresApi(api = Build.VERSION_CODES.N)
     public static CompletableFuture<String> savePost(Post post) {
         CompletableFuture<String> future = new CompletableFuture<>();
@@ -36,19 +36,19 @@ public class PostProvider {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
-    public static CompletableFuture<List<Post>> getPosts() {
-        CompletableFuture<List<Post>> future = new CompletableFuture<>();
+    public static CompletableFuture<List<PostIdPair>> getPosts() {
+        CompletableFuture<List<PostIdPair>> future = new CompletableFuture<>();
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         db.collection(Consts.POSTS_COLLECTION)
                 .get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
-                        List<Post> posts = new LinkedList<>();
+                        List<PostIdPair> postsPairs = new LinkedList<>();
                         for (QueryDocumentSnapshot document : task.getResult()) {
-                            posts.add(Post.from(document.getData()));
+                            postsPairs.add(new PostIdPair(document.getId(), Post.from(document.getData())));
                         }
-                        future.complete(posts);
+                        future.complete(postsPairs);
 
                     } else {
                         Log.w(Consts.TAG, "Error getting documents.", task.getException());

@@ -12,6 +12,7 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.colman.bar.admoni.a3rs.models.Post;
+import com.colman.bar.admoni.a3rs.providers.PostIdPair;
 import com.colman.bar.admoni.a3rs.providers.PostProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -32,8 +33,6 @@ public class FeedActivity extends AppCompatActivity {
             Log.d(Consts.TAG, "User is NOT logged in!");
             return;
         }
-
-        Log.d(Consts.TAG, currentUser.getUid());
 
         TextView welcomeTextView = findViewById(R.id.wellcomeMessage);
         Button logoffButton = findViewById(R.id.logoffButton);
@@ -71,15 +70,15 @@ public class FeedActivity extends AppCompatActivity {
     public void handleLoadData(View v) {
         Log.d(Consts.TAG, "Load data!!");
 
-        CompletableFuture<List<Post>> future = PostProvider.getPosts();
-        future.whenComplete((posts, err) -> {
+        CompletableFuture<List<PostIdPair>> future = PostProvider.getPosts();
+        future.whenComplete((postPairs, err) -> {
             if (err != null) {
                 Log.w(Consts.TAG, "Error getting documents.", err);
                 return;
             }
 
-            for (Post post : posts) {
-                Log.d(Consts.TAG, post.toString());
+            for (PostIdPair postPair : postPairs) {
+                Log.d(Consts.TAG, "ID: " + postPair.getId() + "=" + postPair.getPost().toString());
             }
         });
     }
