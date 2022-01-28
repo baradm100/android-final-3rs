@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "366848723630",
+    "project_id": "rs-954ca",
+    "storage_bucket": "rs-954ca.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:366848723630:android:287c9ba65bef35ce5bbb3f",
+        "android_client_info": {
+          "package_name": "com.colman.bar.admoni.a3rs"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "366848723630-j9h8t174q5813ettf2snm788ad1ig2u0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD38RiUnqex-uRO0R0Vsg6wH9XOpuv1jTM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "366848723630-j9h8t174q5813ettf2snm788ad1ig2u0.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
