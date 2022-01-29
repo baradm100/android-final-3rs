@@ -93,12 +93,6 @@ public class FeedFragment extends Fragment {
         });
     }
 
-    public void handleLogoff(View v) {
-        mAuth.signOut();
-        Intent i = new Intent(getActivity(), MainActivity.class);
-        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(i);
-    }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     public void handleLoadData(View v) {
