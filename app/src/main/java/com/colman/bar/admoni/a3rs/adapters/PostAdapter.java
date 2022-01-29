@@ -46,16 +46,19 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.CardViewHolder
 
     class CardViewHolder extends RecyclerView.ViewHolder {
         private TextView titleTextView;
+        private TextView subTitleTextView;
 
         public CardViewHolder(@NonNull View itemView) {
             super(itemView);
 
             titleTextView = itemView.findViewById(R.id.postTitleTextView);
+            subTitleTextView = itemView.findViewById(R.id.postSubTitleTextView);
         }
 
         public void renderPost(PostIdPair postIdPair) {
             Post post = postIdPair.getPost();
             this.titleTextView.setText(post.getTitle());
+            this.subTitleTextView.setText(post.getSubTitle());
         }
     }
 }
