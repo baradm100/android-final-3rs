@@ -53,7 +53,8 @@ public class FeedActivity extends AppCompatActivity {
         Log.d(Consts.TAG, "Create data!!");
         FirebaseUser currentUser = mAuth.getCurrentUser();
 
-        Post newPost = new Post("test title", "from code", "desc", currentUser.getEmail(), currentUser.getPhoneNumber(), currentUser.getUid());
+        Post newPost = new Post("test title", "from code", "desc",
+                currentUser.getEmail(), currentUser.getPhoneNumber(), currentUser.getUid());
 
         CompletableFuture<String> future = PostProvider.savePost(newPost);
         future.whenComplete((postID, err) -> {
