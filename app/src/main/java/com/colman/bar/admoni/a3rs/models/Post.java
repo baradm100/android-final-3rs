@@ -52,6 +52,9 @@ public class Post {
         return data;
     }
 
+    public String getTitle() {
+        return title;
+    }
 
     @Override
     public String toString() {
