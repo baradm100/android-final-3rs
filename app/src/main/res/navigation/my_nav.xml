@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/my_nav"
+    app:startDestination="@id/feedFragment">
+
+    <fragment
+        android:id="@+id/feedFragment"
+        android:name="com.colman.bar.admoni.a3rs.FeedFragment"
+        android:label="fragment_feed"
+        tools:layout="@layout/fragment_feed" >
+        <action
+            android:id="@+id/action_feedFragment_to_postViewFragment"
+            app:destination="@id/postViewFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/postViewFragment"
+        android:name="com.colman.bar.admoni.a3rs.PostViewFragment"
+        android:label="fragment_post_view"
+        tools:layout="@layout/fragment_post_view" >
+        <action
+            android:id="@+id/action_postViewFragment_to_feedFragment"
+            app:destination="@id/feedFragment" />
+    </fragment>
+</navigation>
