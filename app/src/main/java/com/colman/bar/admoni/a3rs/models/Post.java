@@ -1,6 +1,10 @@
 package com.colman.bar.admoni.a3rs.models;
 
+import com.google.firebase.Timestamp;
+import com.google.firebase.firestore.FieldValue;
+
 import java.io.Serializable;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -11,6 +15,7 @@ public class Post implements Serializable {
     private String userName;
     private String userPhone;
     private String userUid;
+    private Date createdAt;
 
     public static Post from(Map<String, Object> data) {
         String title = getValueFromMapSafely(data, "title");
@@ -19,8 +24,9 @@ public class Post implements Serializable {
         String userName = getValueFromMapSafely(data, "userName");
         String userPhone = getValueFromMapSafely(data, "userPhone");
         String userUid = getValueFromMapSafely(data, "userUid");
+        Date createdAt = getDateFromMapSafely(data, "createdAt");
 
-        return new Post(title, subTitle, description, userName, userPhone, userUid);
+        return new Post(title, subTitle, description, userName, userPhone, userUid, createdAt);
     }
 
     private static String getValueFromMapSafely(Map<String, Object> data, String key) {
@@ -31,13 +37,22 @@ public class Post implements Serializable {
         return null;
     }
 
-    public Post(String title, String subTitle, String description, String userName, String userPhone, String userUid) {
+    private static Date getDateFromMapSafely(Map<String, Object> data, String key) {
+        if (data.containsKey(key) && data.get(key) != null) {
+            return ((Timestamp) data.get(key)).toDate();
+        }
+
+        return null;
+    }
+
+    public Post(String title, String subTitle, String description, String userName, String userPhone, String userUid, Date createdAt) {
         this.title = title;
         this.subTitle = subTitle;
         this.description = description;
         this.userName = userName;
         this.userPhone = userPhone;
         this.userUid = userUid;
+        this.createdAt = createdAt;
     }
 
     public Map<String, Object> to() {
@@ -49,6 +64,12 @@ public class Post implements Serializable {
         data.put("userName", userName);
         data.put("userPhone", userPhone);
         data.put("userUid", userUid);
+
+        if (createdAt == null) {
+            data.put("createdAt", FieldValue.serverTimestamp());
+        } else {
+            data.put("createdAt", createdAt);
+        }
 
         return data;
     }
@@ -97,6 +118,9 @@ public class Post implements Serializable {
 
         sb.append("\n\tuserUid=");
         sb.append(userUid);
+
+        sb.append("\n\tcreatedAt=");
+        sb.append(createdAt);
 
 
         sb.append("\n}");

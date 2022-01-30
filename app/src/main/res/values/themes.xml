@@ -14,4 +14,9 @@
         <!-- Customize your theme here. -->
         <item name="windowNoTitle">true</item>
     </style>
+
+    <style name="Theme.3Rs.DeleteButton" parent="Widget.MaterialComponents.Button">
+        <item name="backgroundTint">@android:color/holo_red_dark</item>
+        <item name="rippleColor">@android:color/holo_red_light</item>
+    </style>
 </resources>

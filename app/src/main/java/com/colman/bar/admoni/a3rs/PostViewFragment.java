@@ -7,14 +7,19 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
+import androidx.swiperefreshlayout.widget.CircularProgressDrawable;
 
+import com.bumptech.glide.Glide;
 import com.colman.bar.admoni.a3rs.models.Post;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -27,6 +32,8 @@ public class PostViewFragment extends Fragment {
     private String postId;
     private Post post;
     private boolean showEdit;
+    private final FirebaseStorage storage = FirebaseStorage.getInstance();
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -55,11 +62,25 @@ public class PostViewFragment extends Fragment {
         TextView postViewSubtitleTextView = v.findViewById(R.id.postViewSubtitleTextView);
         TextView postViewDescriptionTextView = v.findViewById(R.id.postViewDescriptionTextView);
         TextView postViewUserEditText = v.findViewById(R.id.postViewUserTextView);
+        ImageView postViewImageView = v.findViewById(R.id.postViewImageView);
 
         postViewTitleTextView.setText(post.getTitle());
         postViewSubtitleTextView.setText(post.getSubTitle());
         postViewDescriptionTextView.setText(post.getDescription());
         postViewUserEditText.setText(post.getUserName());
+
+        StorageReference storageRef = storage.getReference();
+        StorageReference productImageRef = storageRef.child("images/" + postId + ".jpg");
+
+        CircularProgressDrawable circularProgressDrawable = new CircularProgressDrawable(v.getContext());
+        circularProgressDrawable.setStrokeWidth(5);
+        circularProgressDrawable.setCenterRadius(30);
+        circularProgressDrawable.start();
+
+        Glide.with(this)
+                .load(productImageRef)
+                .placeholder(circularProgressDrawable)
+                .into(postViewImageView);
 
         return v;
     }
@@ -70,7 +91,7 @@ public class PostViewFragment extends Fragment {
 
     private void handleCallClick(View r) {
         try {
-            String phone = post.getUserPhone().length() == 0 ? "054-4582766" : post.getUserPhone();
+            String phone = post.getUserPhone();
             Intent callIntent = new Intent(Intent.ACTION_CALL);
             callIntent.setData(Uri.parse("tel:" + phone));
             startActivity(callIntent);
