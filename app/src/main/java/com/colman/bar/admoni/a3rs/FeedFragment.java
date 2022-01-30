@@ -1,6 +1,5 @@
 package com.colman.bar.admoni.a3rs;
 
-import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -32,6 +31,7 @@ import java.util.concurrent.CompletableFuture;
 public class FeedFragment extends Fragment {
     private final FirebaseAuth mAuth = FirebaseAuth.getInstance();
     private RecyclerView postsList;
+    private PostAdapter postAdapter;
 
     public FeedFragment() {
         // Required empty public constructor
@@ -45,17 +45,17 @@ public class FeedFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_feed, container, false);
         postsList = v.findViewById(R.id.postsRecyclerView);
 
-        PostAdapter postAdapter = new PostAdapter();
+        postAdapter = new PostAdapter();
         postsList.setAdapter(postAdapter);
         postsList.setLayoutManager(new LinearLayoutManager(this.getContext()));
 
 
         SwipeRefreshLayout swipeRefreshLayout = v.findViewById(R.id.postsSwipeRefreshLayout);
         swipeRefreshLayout.setRefreshing(true);
-        loadData(postAdapter, swipeRefreshLayout);
+        loadData(v);
 
         swipeRefreshLayout.setOnRefreshListener(() -> {
-            loadData(postAdapter, swipeRefreshLayout);
+            loadData(v);
         });
 
 //        v.findViewById(R.id.goToPostButton).setOnClickListener(bV -> {
@@ -72,7 +72,9 @@ public class FeedFragment extends Fragment {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
-    private void loadData(PostAdapter postAdapter, SwipeRefreshLayout swipeRefreshLayout) {
+    private void loadData(View v) {
+        SwipeRefreshLayout swipeRefreshLayout = v.findViewById(R.id.postsSwipeRefreshLayout);
+
         CompletableFuture<List<PostIdPair>> future = PostProvider.getPosts();
         future.whenComplete((postPairs, err) -> {
             swipeRefreshLayout.setRefreshing(false);
@@ -92,6 +94,12 @@ public class FeedFragment extends Fragment {
                 Log.d(Consts.TAG, "ID: " + postPair.getId() + "=" + postPair.getPost().toString());
             }
         });
+
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    public void loadData() {
+        loadData(getView());
     }
 
 
