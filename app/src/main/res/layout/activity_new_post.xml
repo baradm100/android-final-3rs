@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".NewPostActivity">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+
+            <ImageView
+                android:id="@+id/newPostImageView"
+                android:layout_width="match_parent"
+                android:layout_height="375dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/post_demo"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <EditText
+                android:id="@+id/newPostPostTitleEditText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="10dp"
+                android:ems="10"
+                android:hint="Product Name"
+                android:inputType="textPersonName"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/newPostImageView" />
+
+            <EditText
+                android:id="@+id/newPostPostSubTitleEditText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="10dp"
+                android:ems="10"
+                android:hint="Product Deatiles"
+                android:inputType="textPersonName"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/newPostPostTitleEditText" />
+
+            <EditText
+                android:id="@+id/newPostPhoneEditText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="10dp"
+                android:ems="10"
+                android:hint="Phone"
+                android:inputType="phone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toEndOf="@+id/newPostPhineImage"
+                app:layout_constraintTop_toBottomOf="@+id/newPostDescriptionEditText" />
+
+            <EditText
+                android:id="@+id/newPostDescriptionEditText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="10dp"
+                android:ems="10"
+                android:gravity="start|top"
+                android:hint="Product Description"
+                android:inputType="textMultiLine"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/newPostPostSubTitleEditText" />
+
+            <ImageView
+                android:id="@+id/newPostPhineImage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="25dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/newPostDescriptionEditText"
+                app:srcCompat="@drawable/ic_baseline_phone_30" />
+
+            <Button
+                android:id="@+id/newPostSaveButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="10dp"
+                android:onClick="handleClickSave"
+                android:text="Save"
+                app:layout_constraintBottom_toTopOf="@+id/newPostDeleteButton"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/newPostPhoneEditText" />
+
+            <Button
+                android:id="@+id/newPostDeleteButton"
+                style="@style/Theme.3Rs.DeleteButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:text="Delete"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/newPostSaveButton" />
+
+            <ProgressBar
+                android:id="@+id/newPostProgressBar"
+                style="?android:attr/progressBarStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="invisible"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

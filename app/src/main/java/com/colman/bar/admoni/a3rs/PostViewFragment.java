@@ -70,7 +70,7 @@ public class PostViewFragment extends Fragment {
 
     private void handleCallClick(View r) {
         try {
-            String phone = post.getUserPhone().length() == 0 ? "054-4582766" : post.getUserPhone();
+            String phone = post.getUserPhone();
             Intent callIntent = new Intent(Intent.ACTION_CALL);
             callIntent.setData(Uri.parse("tel:" + phone));
             startActivity(callIntent);

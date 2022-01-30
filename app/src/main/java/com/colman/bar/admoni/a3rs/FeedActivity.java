@@ -37,4 +37,9 @@ public class FeedActivity extends AppCompatActivity {
         startActivity(i);
     }
 
+    public void handleAddPostClick(View v) {
+        Intent i = new Intent(this, NewPostActivity.class);
+        startActivity(i);
+    }
+
 }

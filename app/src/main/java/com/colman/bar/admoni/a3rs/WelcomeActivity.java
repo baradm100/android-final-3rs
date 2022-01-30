@@ -11,6 +11,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.colman.bar.admoni.a3rs.utils.StringsUtil;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
@@ -30,7 +31,7 @@ public class WelcomeActivity extends AppCompatActivity {
         String name = welcomeNameTextEdit.getText().toString();
         boolean isValid = true;
 
-        if (name.trim().length() == 0) {
+        if (StringsUtil.isEmpty(name)) {
             welcomeNameTextEdit.setError("Name is a required field");
             isValid = false;
             welcomeNameTextEdit.requestFocus();

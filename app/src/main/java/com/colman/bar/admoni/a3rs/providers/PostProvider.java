@@ -8,6 +8,7 @@ import androidx.annotation.RequiresApi;
 import com.colman.bar.admoni.a3rs.Consts;
 import com.colman.bar.admoni.a3rs.models.Post;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.LinkedList;
@@ -41,6 +42,7 @@ public class PostProvider {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         db.collection(Consts.POSTS_COLLECTION)
+                .orderBy("createdAt", Query.Direction.DESCENDING)
                 .get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {

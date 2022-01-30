@@ -22,6 +22,7 @@ import com.colman.bar.admoni.a3rs.providers.PostProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
@@ -118,7 +119,7 @@ public class FeedFragment extends Fragment {
         FirebaseUser currentUser = mAuth.getCurrentUser();
 
         Post newPost = new Post("test title", "from code", "desc",
-                currentUser.getEmail(), currentUser.getPhoneNumber(), currentUser.getUid());
+                currentUser.getEmail(), currentUser.getPhoneNumber(), currentUser.getUid(), new Date());
 
         CompletableFuture<String> future = PostProvider.savePost(newPost);
         future.whenComplete((postID, err) -> {

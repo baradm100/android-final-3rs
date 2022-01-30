@@ -12,6 +12,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.colman.bar.admoni.a3rs.utils.StringsUtil;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -95,7 +96,7 @@ public class MainActivity extends AppCompatActivity {
     private boolean validateForm(EditText emailTextEdit, EditText passwordEditText) {
         boolean isValid = true;
 
-        if (emailTextEdit.getText().toString().trim().length() == 0) {
+        if (StringsUtil.isEmpty(emailTextEdit.getText().toString())) {
             emailTextEdit.setError("Email is a required field");
             isValid = false;
             emailTextEdit.requestFocus();
@@ -105,7 +106,7 @@ public class MainActivity extends AppCompatActivity {
             emailTextEdit.requestFocus();
         }
 
-        if (passwordEditText.getText().toString().trim().length() == 0) {
+        if (StringsUtil.isEmpty(passwordEditText.getText().toString())) {
             passwordEditText.setError("Password is a required field");
             if (isValid) passwordEditText.requestFocus();
             isValid = false;
@@ -140,7 +141,7 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        if (currentUser.getDisplayName() == null || currentUser.getDisplayName().length() == 0) {
+        if (currentUser.getDisplayName() == null || StringsUtil.isEmpty(currentUser.getDisplayName())) {
             Intent i = new Intent(this, WelcomeActivity.class);
             i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(i);
