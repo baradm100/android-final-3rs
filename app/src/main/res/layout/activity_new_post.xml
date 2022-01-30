@@ -16,14 +16,17 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" >
+            android:layout_height="wrap_content">
 
             <ImageView
                 android:id="@+id/newPostImageView"
                 android:layout_width="match_parent"
                 android:layout_height="375dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:onClick="handleImageClick"
                 android:scaleType="centerCrop"
-                android:src="@drawable/post_demo"
+                android:src="@drawable/ic_baseline_add_a_photo_24"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
