@@ -1,9 +1,10 @@
 package com.colman.bar.admoni.a3rs.models;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Post {
+public class Post implements Serializable {
     private String title;
     private String subTitle;
     private String description;
@@ -58,6 +59,22 @@ public class Post {
 
     public String getSubTitle() {
         return subTitle;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public String getUserPhone() {
+        return userPhone;
+    }
+
+    public String getUserUid() {
+        return userUid;
     }
 
     @Override
