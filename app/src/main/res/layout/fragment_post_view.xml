@@ -7,18 +7,112 @@
     tools:context=".PostViewFragment">
 
     <TextView
-        android:id="@+id/postViewTextView"
+        android:id="@+id/postViewTitleTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="This is a post view"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="16dp"
+        android:text="Title"
+        android:textColor="@color/black"
+        android:textSize="20sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/postViewImageView" />
+
+    <ImageView
+        android:id="@+id/postViewImageView"
+        android:layout_width="match_parent"
+        android:layout_height="375dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/post_demo"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
-        android:id="@+id/goBackToFeedButton"
+    <TextView
+        android:id="@+id/postViewSubtitleTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Go Back!"
+        android:layout_marginStart="10dp"
+        android:text="TextView"
+        android:textSize="16sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/postViewTextView" />
+        app:layout_constraintTop_toBottomOf="@+id/postViewTitleTextView" />
+
+    <TextView
+        android:id="@+id/postViewDescriptionTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:text="TextView"
+        android:textColor="@color/black"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/postViewSubtitleTextView" />
+
+    <ImageView
+        android:id="@+id/postViewAccountImageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="3dp"
+        android:src="@drawable/ic_baseline_account_circle_14"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/postViewDescriptionTextView" />
+
+    <TextView
+        android:id="@+id/postViewUserTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="25dp"
+        android:layout_marginEnd="30dp"
+        android:text="TextView"
+        app:layout_constraintEnd_toStartOf="@+id/postViewImageButton"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toEndOf="@+id/postViewAccountImageView"
+        app:layout_constraintTop_toBottomOf="@+id/postViewDescriptionTextView" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/postViewEditPostFloatingActionButton"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="5dp"
+        android:clickable="true"
+        android:src="@drawable/ic_baseline_edit_24"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/postViewImageView" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="0dp"
+        android:layout_height="55dp"
+        android:background="#80000000"
+        app:layout_constraintEnd_toEndOf="@+id/postViewImageView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageButton
+            android:id="@+id/postViewGoBackButton"
+            android:layout_width="36dp"
+            android:layout_height="0dp"
+            android:background="@android:color/transparent"
+            android:src="@drawable/ic_baseline_arrow_back_ios_new_24"
+            app:cornerRadius="20dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <ImageButton
+        android:id="@+id/postViewImageButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="10dp"
+        android:background="@android:color/transparent"
+        android:src="@drawable/ic_baseline_phone_24"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/postViewDescriptionTextView" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

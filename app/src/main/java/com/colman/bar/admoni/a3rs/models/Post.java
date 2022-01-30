@@ -61,6 +61,22 @@ public class Post implements Serializable {
         return subTitle;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public String getUserPhone() {
+        return userPhone;
+    }
+
+    public String getUserUid() {
+        return userUid;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("Post {");
