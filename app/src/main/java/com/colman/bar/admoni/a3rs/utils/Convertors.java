@@ -6,7 +6,7 @@ import com.google.firebase.firestore.GeoPoint;
 
 public class Convertors {
 
-    public static GeoPoint convertLatLngToGeoPoint(LatLng latLng) {
+    public static GeoPoint convertSerializableLatLngToGeoPoint(SerializableLatLng latLng) {
         if (latLng == null) {
             return null;
         }

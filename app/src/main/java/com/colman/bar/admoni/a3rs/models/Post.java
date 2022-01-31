@@ -84,7 +84,7 @@ public class Post implements Serializable {
         data.put("userPhone", userPhone);
         data.put("userUid", userUid);
         data.put("addressName", addressName);
-        data.put("geoPoint", geoPoint);
+        data.put("geoPoint", Convertors.convertSerializableLatLngToGeoPoint(geoPoint));
 
         if (createdAt == null) {
             data.put("createdAt", FieldValue.serverTimestamp());
