@@ -1,6 +1,7 @@
 package com.colman.bar.admoni.a3rs;
 
-import android.content.DialogInterface;
+import static com.colman.bar.admoni.a3rs.Consts.TAG;
+
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
@@ -23,8 +24,15 @@ import androidx.swiperefreshlayout.widget.CircularProgressDrawable;
 
 import com.bumptech.glide.Glide;
 import com.colman.bar.admoni.a3rs.models.Post;
+import com.colman.bar.admoni.a3rs.models.SerializableLatLng;
 import com.colman.bar.admoni.a3rs.providers.PostProvider;
 import com.colman.bar.admoni.a3rs.utils.StringsUtil;
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.libraries.places.api.model.Place;
+import com.google.android.libraries.places.widget.Autocomplete;
+import com.google.android.libraries.places.widget.AutocompleteActivity;
+import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.storage.FirebaseStorage;
@@ -32,9 +40,12 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 public class NewPostActivity extends AppCompatActivity {
+    private static int AUTOCOMPLETE_REQUEST_CODE = 1;
     public final static String ARG_POST = "post";
     public final static String ARG_POST_ID = "postId";
     private final static int SELECT_PICTURE = 200;
@@ -44,6 +55,8 @@ public class NewPostActivity extends AppCompatActivity {
     private final FirebaseStorage storage = FirebaseStorage.getInstance();
     private String postId;
     private Post postToEdit;
+    private LatLng latLng;
+    private boolean wasImageSelected = false;
 
 
     @Override
@@ -51,16 +64,22 @@ public class NewPostActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_post);
 
+        latLng = null;
+        wasImageSelected = false;
         if (getIntent().getSerializableExtra(ARG_POST) == null) {
             return;
         }
-        Log.d(Consts.TAG, "GOT POST!!");
+        Log.d(TAG, "GOT POST!!");
         postToEdit = (Post) getIntent().getSerializableExtra(ARG_POST);
         postId = getIntent().getStringExtra(ARG_POST_ID);
 
         if (postToEdit == null || postId == null) {
             return;
         }
+
+        latLng = postToEdit.getGeoPoint().to();
+        wasImageSelected = true;
+
 
         // Loading post data
         findViewById(R.id.newPostDeleteButton).setVisibility(View.VISIBLE);
@@ -69,6 +88,7 @@ public class NewPostActivity extends AppCompatActivity {
         EditText newPostPostSubTitleEditText = findViewById(R.id.newPostPostSubTitleEditText);
         EditText newPostDescriptionEditText = findViewById(R.id.newPostDescriptionEditText);
         EditText newPostPhoneEditText = findViewById(R.id.newPostPhoneEditText);
+        EditText newPostAdressEditText = findViewById(R.id.newPostAdressEditText);
         ImageView newPostImageView = findViewById(R.id.newPostImageView);
 
 
@@ -76,7 +96,7 @@ public class NewPostActivity extends AppCompatActivity {
         newPostPostSubTitleEditText.setText(postToEdit.getSubTitle());
         newPostDescriptionEditText.setText(postToEdit.getDescription());
         newPostPhoneEditText.setText(postToEdit.getUserPhone());
-
+        newPostAdressEditText.setText(postToEdit.getAddressName());
         StorageReference storageRef = storage.getReference();
         StorageReference productImageRef = storageRef.child("images/" + postId + ".jpg");
 
@@ -92,6 +112,15 @@ public class NewPostActivity extends AppCompatActivity {
 
     }
 
+    public void handleAdressClick(View v) {
+        List<Place.Field> fields = Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG);
+
+        // Start the autocomplete intent.
+        Intent intent = new Autocomplete.IntentBuilder(AutocompleteActivityMode.FULLSCREEN, fields)
+                .build(this);
+        startActivityForResult(intent, AUTOCOMPLETE_REQUEST_CODE);
+    }
+
     @RequiresApi(api = Build.VERSION_CODES.N)
     public void handleClickSave(View v) {
         if (!validateForm()) {
@@ -99,11 +128,12 @@ public class NewPostActivity extends AppCompatActivity {
         }
         showLoading();
 
-        Log.d(Consts.TAG, "Post is valid, creating");
+        Log.d(TAG, "Post is valid, creating");
         EditText newPostPostTitleEditText = findViewById(R.id.newPostPostTitleEditText);
         EditText newPostPostSubTitleEditText = findViewById(R.id.newPostPostSubTitleEditText);
         EditText newPostDescriptionEditText = findViewById(R.id.newPostDescriptionEditText);
         EditText newPostPhoneEditText = findViewById(R.id.newPostPhoneEditText);
+        EditText newPostAdressEditText = findViewById(R.id.newPostAdressEditText);
         ImageView newPostImageView = findViewById(R.id.newPostImageView);
         FirebaseUser currentUser = mAuth.getCurrentUser();
 
@@ -113,7 +143,9 @@ public class NewPostActivity extends AppCompatActivity {
                 currentUser.getDisplayName(),
                 newPostPhoneEditText.getText().toString(),
                 currentUser.getUid(),
-                null);
+                null, // Will be set by the backend
+                newPostAdressEditText.getText().toString(),
+                new SerializableLatLng(latLng));
 
 
         CompletableFuture<String> future;
@@ -126,7 +158,7 @@ public class NewPostActivity extends AppCompatActivity {
         }
         future.whenComplete((postID, err) -> {
             if (err != null) {
-                Log.w(Consts.TAG, "Error save post", err);
+                Log.w(TAG, "Error save post", err);
                 hideLoading();
                 Toast.makeText(NewPostActivity.this, "Failed to post product",
                         Toast.LENGTH_SHORT).show();
@@ -134,7 +166,7 @@ public class NewPostActivity extends AppCompatActivity {
                 return;
             }
 
-            Log.d(Consts.TAG, "Post was saved: " + postID);
+            Log.d(TAG, "Post was saved: " + postID);
 
             Bitmap bitmap = ((BitmapDrawable) newPostImageView.getDrawable()).getBitmap();
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -146,9 +178,9 @@ public class NewPostActivity extends AppCompatActivity {
             UploadTask uploadTask = productImageRef.putBytes(data);
 
             uploadTask.addOnFailureListener(e -> {
-                Log.w(Consts.TAG, "Failed to upload a file", e);
+                Log.w(TAG, "Failed to upload a file", e);
             }).addOnSuccessListener(snap -> {
-                Log.w(Consts.TAG, "Image uploaded: " + snap.getTotalByteCount());
+                Log.w(TAG, "Image uploaded: " + snap.getTotalByteCount());
                 Toast.makeText(NewPostActivity.this, "Product was posted!",
                         Toast.LENGTH_SHORT).show();
                 Intent resultData = new Intent(this, NewPostActivity.class);
@@ -165,17 +197,17 @@ public class NewPostActivity extends AppCompatActivity {
         alert.setTitle("Delete");
         alert.setMessage("Are you sure you want to delete?");
         alert.setPositiveButton("Yes", (dialog, which) -> {
-            Log.d(Consts.TAG, "Delete requested: " + postId);
+            Log.d(TAG, "Delete requested: " + postId);
 
             showLoading();
 
             dialog.dismiss();
 
-            CompletableFuture<Boolean> future  = PostProvider.deletePost(postId);
+            CompletableFuture<Boolean> future = PostProvider.deletePost(postId);
 
             future.whenComplete((postID, err) -> {
                 if (err != null) {
-                    Log.w(Consts.TAG, "Error save post", err);
+                    Log.w(TAG, "Error save post", err);
                     hideLoading();
                     Toast.makeText(NewPostActivity.this, "Failed to post product",
                             Toast.LENGTH_SHORT).show();
@@ -183,9 +215,22 @@ public class NewPostActivity extends AppCompatActivity {
                     return;
                 }
 
-                Log.d(Consts.TAG, "Post was deleted: " + postID);
-                setResult(RESULT_CANCELED);
-                finish();
+                Log.d(TAG, "Post was deleted: " + postID);
+
+                StorageReference storageRef = storage.getReference();
+                StorageReference productImageRef = storageRef.child("images/" + postId + ".jpg");
+                productImageRef.delete().addOnSuccessListener(aVoid -> {
+                    Log.d(TAG, "Image was deleted");
+                    setResult(RESULT_CANCELED);
+                    finish();
+                }).addOnFailureListener(error -> {
+                    // Silent failure
+                    Log.w(TAG, "Image failed", error);
+                    setResult(RESULT_CANCELED);
+                    finish();
+                });
+
+
             });
         });
         alert.setNegativeButton("No", (dialog, which) -> dialog.dismiss());
@@ -194,7 +239,7 @@ public class NewPostActivity extends AppCompatActivity {
     }
 
     public void handleImageClick(View v) {
-        Log.d(Consts.TAG, "IMAGE WAS CLICKED!");
+        Log.d(TAG, "IMAGE WAS CLICKED!");
         Intent intent = new Intent();
         intent.setType("image/*");
         intent.setAction(Intent.ACTION_GET_CONTENT);
@@ -210,20 +255,39 @@ public class NewPostActivity extends AppCompatActivity {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (resultCode == RESULT_OK) {
+        if (requestCode == SELECT_PICTURE && resultCode == RESULT_OK) {
             // compare the resultCode with the
             // SELECT_PICTURE constant
-            if (requestCode == SELECT_PICTURE) {
-                // Get the url of the image from data
-                Uri selectedImageUri = data.getData();
-                if (null != selectedImageUri) {
-                    // update the preview image in the layout
-                    ImageView newPostImageView = findViewById(R.id.newPostImageView);
+            // Get the url of the image from data
+            Uri selectedImageUri = data.getData();
+            if (null != selectedImageUri) {
+                // update the preview image in the layout
+                ImageView newPostImageView = findViewById(R.id.newPostImageView);
 
-                    newPostImageView.setImageURI(selectedImageUri);
-                }
+                newPostImageView.setImageURI(selectedImageUri);
+                wasImageSelected = true;
+
             }
         }
+
+        if (requestCode == AUTOCOMPLETE_REQUEST_CODE) {
+            if (resultCode == RESULT_OK) {
+                Place place = Autocomplete.getPlaceFromIntent(data);
+                Log.i(TAG, "Place: " + place.getName() + ", " + place.getId());
+                latLng = place.getLatLng();
+                EditText newPostAdressEditText = findViewById(R.id.newPostAdressEditText);
+                newPostAdressEditText.setText(place.getName());
+            } else if (resultCode == AutocompleteActivity.RESULT_ERROR) {
+                Status status = Autocomplete.getStatusFromIntent(data);
+                Log.i(TAG, status.getStatusMessage());
+                Toast.makeText(NewPostActivity.this, "Failed to select an address",
+                        Toast.LENGTH_SHORT).show();
+
+            } else if (resultCode == RESULT_CANCELED) {
+                // The user canceled the operation.
+            }
+        }
+
     }
 
     private void showLoading() {
@@ -233,6 +297,7 @@ public class NewPostActivity extends AppCompatActivity {
         EditText newPostPostSubTitleEditText = findViewById(R.id.newPostPostSubTitleEditText);
         EditText newPostDescriptionEditText = findViewById(R.id.newPostDescriptionEditText);
         EditText newPostPhoneEditText = findViewById(R.id.newPostPhoneEditText);
+        EditText newPostAdressEditText = findViewById(R.id.newPostAdressEditText);
         ImageView newPostImageView = findViewById(R.id.newPostImageView);
         Button newPostSaveButton = findViewById(R.id.newPostSaveButton);
         Button newPostDeleteButton = findViewById(R.id.newPostDeleteButton);
@@ -244,6 +309,7 @@ public class NewPostActivity extends AppCompatActivity {
         newPostSaveButton.setEnabled(false);
         newPostDeleteButton.setEnabled(false);
         newPostImageView.setEnabled(false);
+        newPostAdressEditText.setEnabled(false);
 
         newPostProgressBar.setVisibility(View.VISIBLE);
     }
@@ -254,6 +320,7 @@ public class NewPostActivity extends AppCompatActivity {
         EditText newPostPostTitleEditText = findViewById(R.id.newPostPostTitleEditText);
         EditText newPostPostSubTitleEditText = findViewById(R.id.newPostPostSubTitleEditText);
         EditText newPostDescriptionEditText = findViewById(R.id.newPostDescriptionEditText);
+        EditText newPostAdressEditText = findViewById(R.id.newPostAdressEditText);
         EditText newPostPhoneEditText = findViewById(R.id.newPostPhoneEditText);
         ImageView newPostImageView = findViewById(R.id.newPostImageView);
         Button newPostSaveButton = findViewById(R.id.newPostSaveButton);
@@ -266,6 +333,7 @@ public class NewPostActivity extends AppCompatActivity {
         newPostSaveButton.setEnabled(true);
         newPostDeleteButton.setEnabled(true);
         newPostImageView.setEnabled(true);
+        newPostAdressEditText.setEnabled(true);
 
         newPostProgressBar.setVisibility(View.INVISIBLE);
     }
@@ -276,6 +344,8 @@ public class NewPostActivity extends AppCompatActivity {
         EditText newPostPostSubTitleEditText = findViewById(R.id.newPostPostSubTitleEditText);
         EditText newPostDescriptionEditText = findViewById(R.id.newPostDescriptionEditText);
         EditText newPostPhoneEditText = findViewById(R.id.newPostPhoneEditText);
+        EditText newPostAdressEditText = findViewById(R.id.newPostAdressEditText);
+
 
         if (StringsUtil.isEmpty(newPostPostTitleEditText.getText().toString())) {
             isValid = false;
@@ -303,6 +373,29 @@ public class NewPostActivity extends AppCompatActivity {
             isValid = false;
             newPostPhoneEditText.setError("Phone must be in a valid format");
             newPostPhoneEditText.requestFocus();
+        }
+
+        if (StringsUtil.isEmpty(newPostAdressEditText.getText().toString())) {
+            isValid = false;
+            newPostAdressEditText.setError("Address is a required field");
+            newPostAdressEditText.requestFocus();
+        }
+
+        if (latLng == null) {
+            isValid = false;
+            newPostAdressEditText.setError("Address is a required field");
+            newPostAdressEditText.requestFocus();
+        }
+
+        if (!wasImageSelected) {
+            isValid = false;
+            AlertDialog.Builder alert = new AlertDialog.Builder(NewPostActivity.this);
+            alert.setTitle("Missing Image");
+            alert.setMessage("Image is a required field");
+            alert.setPositiveButton("OK", (dialog, which) -> {
+                dialog.dismiss();
+            });
+            alert.show();
         }
 
 

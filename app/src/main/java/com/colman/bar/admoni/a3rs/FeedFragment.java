@@ -127,7 +127,7 @@ public class FeedFragment extends Fragment {
         FirebaseUser currentUser = mAuth.getCurrentUser();
 
         Post newPost = new Post("test title", "from code", "desc",
-                currentUser.getEmail(), currentUser.getPhoneNumber(), currentUser.getUid(), new Date());
+                currentUser.getEmail(), currentUser.getPhoneNumber(), currentUser.getUid(), null, null, null);
 
         CompletableFuture<String> future = PostProvider.savePost(newPost);
         future.whenComplete((postID, err) -> {

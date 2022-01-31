@@ -22,6 +22,12 @@ import androidx.swiperefreshlayout.widget.CircularProgressDrawable;
 
 import com.bumptech.glide.Glide;
 import com.colman.bar.admoni.a3rs.models.Post;
+import com.google.android.gms.maps.CameraUpdate;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.MapsInitializer;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -39,6 +45,8 @@ public class PostViewFragment extends Fragment {
     private boolean showEdit;
     private final FirebaseStorage storage = FirebaseStorage.getInstance();
     private ActivityResultLauncher<Intent> mStartForResult;
+    MapView mMapView;
+    private GoogleMap googleMap;
 
 
     @Override
@@ -114,6 +122,25 @@ public class PostViewFragment extends Fragment {
         v.findViewById(R.id.postViewEditPostFloatingActionButton).setOnClickListener(this::handleEditClick);
 
         loadPostData(v);
+
+        mMapView = (MapView) v.findViewById(R.id.map);
+        mMapView.onCreate(savedInstanceState);
+
+        mMapView.onResume(); // needed to get the map to display immediately
+        try {
+            MapsInitializer.initialize(getActivity().getApplicationContext());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        mMapView.getMapAsync(map -> {
+            Log.d(Consts.TAG, "Map was loaded!");
+            map.addMarker(new MarkerOptions()
+                    .position(post.getGeoPoint().to())
+                    .title(post.getAddressName()));
+            CameraUpdate yourLocation = CameraUpdateFactory.newLatLngZoom(post.getGeoPoint().to(), 11.0f);
+            map.animateCamera(yourLocation);
+        });
 
 
         return v;

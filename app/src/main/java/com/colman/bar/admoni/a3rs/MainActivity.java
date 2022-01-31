@@ -1,6 +1,8 @@
 package com.colman.bar.admoni.a3rs;
 
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.Patterns;
@@ -10,18 +12,42 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.colman.bar.admoni.a3rs.utils.StringsUtil;
+import com.google.android.libraries.places.api.Places;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 public class MainActivity extends AppCompatActivity {
     private final FirebaseAuth mAuth = FirebaseAuth.getInstance();
+    private Places p;
+
+    private void initPlaces() {
+        Log.d(Consts.TAG, "Was init!");
+
+        ApplicationInfo applicationInfo = null;
+        try {
+            applicationInfo = getPackageManager().getApplicationInfo(getPackageName(), PackageManager.GET_META_DATA);
+        } catch (Exception e) {
+            Log.w(Consts.TAG, "applicationInfo failed", e);
+        }
+        String apiKey = null;
+        if (applicationInfo != null) {
+            apiKey = applicationInfo.metaData.getString("com.google.android.geo.API_KEY");
+        }
+
+        Log.d(Consts.TAG, "apiKey=" + apiKey);
+        Places.initialize(getApplicationContext(), apiKey);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        initPlaces();
+
+
         setContentView(R.layout.activity_main);
 
         FirebaseUser currentUser = mAuth.getCurrentUser();
