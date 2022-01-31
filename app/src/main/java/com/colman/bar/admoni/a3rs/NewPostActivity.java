@@ -388,6 +388,7 @@ public class NewPostActivity extends AppCompatActivity {
         }
 
         if (!wasImageSelected) {
+            isValid = false;
             AlertDialog.Builder alert = new AlertDialog.Builder(NewPostActivity.this);
             alert.setTitle("Missing Image");
             alert.setMessage("Image is a required field");
