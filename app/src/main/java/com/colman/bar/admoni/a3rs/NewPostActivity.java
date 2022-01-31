@@ -278,9 +278,11 @@ public class NewPostActivity extends AppCompatActivity {
                 EditText newPostAdressEditText = findViewById(R.id.newPostAdressEditText);
                 newPostAdressEditText.setText(place.getName());
             } else if (resultCode == AutocompleteActivity.RESULT_ERROR) {
-                // TODO: Handle the error.
                 Status status = Autocomplete.getStatusFromIntent(data);
                 Log.i(TAG, status.getStatusMessage());
+                Toast.makeText(NewPostActivity.this, "Failed to select an address",
+                        Toast.LENGTH_SHORT).show();
+
             } else if (resultCode == RESULT_CANCELED) {
                 // The user canceled the operation.
             }
