@@ -37,6 +37,27 @@ public class PostProvider {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
+    public static CompletableFuture<String> updatePost(String postId, Post updatedPost) {
+        CompletableFuture<String> future = new CompletableFuture<>();
+
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection(Consts.POSTS_COLLECTION)
+                .document(postId)
+                .update(updatedPost.to())
+                .addOnSuccessListener(documentReference -> {
+                    Log.d(Consts.TAG, "DocumentSnapshot updated with ID: " + postId);
+                    future.complete(postId);
+                })
+                .addOnFailureListener(e -> {
+                    Log.w(Consts.TAG, "Error updating document", e);
+                    future.completeExceptionally(e);
+                });
+
+        return future;
+    }
+
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
     public static CompletableFuture<List<PostIdPair>> getPosts() {
         CompletableFuture<List<PostIdPair>> future = new CompletableFuture<>();
         FirebaseFirestore db = FirebaseFirestore.getInstance();

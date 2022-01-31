@@ -17,7 +17,9 @@ import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.swiperefreshlayout.widget.CircularProgressDrawable;
 
+import com.bumptech.glide.Glide;
 import com.colman.bar.admoni.a3rs.models.Post;
 import com.colman.bar.admoni.a3rs.providers.PostProvider;
 import com.colman.bar.admoni.a3rs.utils.StringsUtil;
@@ -32,11 +34,14 @@ import java.util.concurrent.CompletableFuture;
 
 public class NewPostActivity extends AppCompatActivity {
     public final static String ARG_POST = "post";
+    public final static String ARG_POST_ID = "postId";
     private final static int SELECT_PICTURE = 200;
 
 
     private final FirebaseAuth mAuth = FirebaseAuth.getInstance();
     private final FirebaseStorage storage = FirebaseStorage.getInstance();
+    private String postId;
+    private Post postToEdit;
 
 
     @Override
@@ -44,15 +49,45 @@ public class NewPostActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_post);
 
-        if (savedInstanceState == null) {
+        if (getIntent().getSerializableExtra(ARG_POST) == null) {
             return;
         }
-        Post postToEdit = (Post) savedInstanceState.getSerializable(ARG_POST);
+        Log.d(Consts.TAG, "GOT POST!!");
+        postToEdit = (Post) getIntent().getSerializableExtra(ARG_POST);
+        postId = getIntent().getStringExtra(ARG_POST_ID);
 
-        if (postToEdit != null) {
-            // Showing the delete
-            findViewById(R.id.newPostDeleteButton).setVisibility(View.VISIBLE);
+        if (postToEdit == null || postId == null) {
+            return;
         }
+
+        // Loading post data
+        findViewById(R.id.newPostDeleteButton).setVisibility(View.VISIBLE);
+
+        EditText newPostPostTitleEditText = findViewById(R.id.newPostPostTitleEditText);
+        EditText newPostPostSubTitleEditText = findViewById(R.id.newPostPostSubTitleEditText);
+        EditText newPostDescriptionEditText = findViewById(R.id.newPostDescriptionEditText);
+        EditText newPostPhoneEditText = findViewById(R.id.newPostPhoneEditText);
+        ImageView newPostImageView = findViewById(R.id.newPostImageView);
+
+
+        newPostPostTitleEditText.setText(postToEdit.getTitle());
+        newPostPostSubTitleEditText.setText(postToEdit.getSubTitle());
+        newPostDescriptionEditText.setText(postToEdit.getDescription());
+        newPostPhoneEditText.setText(postToEdit.getUserPhone());
+
+        StorageReference storageRef = storage.getReference();
+        StorageReference productImageRef = storageRef.child("images/" + postId + ".jpg");
+
+        CircularProgressDrawable circularProgressDrawable = new CircularProgressDrawable(this);
+        circularProgressDrawable.setStrokeWidth(5);
+        circularProgressDrawable.setCenterRadius(30);
+        circularProgressDrawable.start();
+
+        Glide.with(this)
+                .load(productImageRef)
+                .placeholder(circularProgressDrawable)
+                .into(newPostImageView);
+
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -79,7 +114,14 @@ public class NewPostActivity extends AppCompatActivity {
                 null);
 
 
-        CompletableFuture<String> future = PostProvider.savePost(newPost);
+        CompletableFuture<String> future;
+        if (postToEdit == null || postId == null) {
+            // No post, creating a new one
+            future = PostProvider.savePost(newPost);
+        } else {
+            // Post edit, updating the post
+            future = PostProvider.updatePost(postId, newPost);
+        }
         future.whenComplete((postID, err) -> {
             if (err != null) {
                 Log.w(Consts.TAG, "Error save post", err);
@@ -107,7 +149,9 @@ public class NewPostActivity extends AppCompatActivity {
                 Log.w(Consts.TAG, "Image uploaded: " + snap.getTotalByteCount());
                 Toast.makeText(NewPostActivity.this, "Product was posted!",
                         Toast.LENGTH_SHORT).show();
-                setResult(RESULT_OK);
+                Intent resultData = new Intent(this, NewPostActivity.class);
+                resultData.putExtra(ARG_POST, newPost);
+                setResult(RESULT_OK, resultData);
                 finish();
             });
         });

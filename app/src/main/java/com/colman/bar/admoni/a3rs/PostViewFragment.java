@@ -1,5 +1,7 @@
 package com.colman.bar.admoni.a3rs;
 
+import static android.app.Activity.RESULT_OK;
+
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -11,6 +13,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 import androidx.swiperefreshlayout.widget.CircularProgressDrawable;
@@ -33,6 +37,7 @@ public class PostViewFragment extends Fragment {
     private Post post;
     private boolean showEdit;
     private final FirebaseStorage storage = FirebaseStorage.getInstance();
+    private ActivityResultLauncher<Intent> mStartForResult;
 
 
     @Override
@@ -43,21 +48,25 @@ public class PostViewFragment extends Fragment {
             post = (Post) getArguments().getSerializable(ARG_POST);
             showEdit = FirebaseAuth.getInstance().getCurrentUser().getUid().equals(post.getUserUid());
         }
+
+        mStartForResult = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == RESULT_OK) {
+                        Log.d(Consts.TAG, "Post Updated!");
+                        Post updatedPost = (Post) result.getData().getExtras().getSerializable(ARG_POST);
+                        post = updatedPost;
+                        loadPostData();
+                    }
+                });
     }
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        View v = inflater.inflate(R.layout.fragment_post_view, container, false);
+    private void loadPostData() {
+        View v = getView();
+        loadPostData(v);
+    }
 
-        if (showEdit) {
-            v.findViewById(R.id.postViewEditPostFloatingActionButton).setVisibility(View.VISIBLE);
-        }
-
-        v.findViewById(R.id.postViewGoBackButton).setOnClickListener(this::handleGoBackToFeedClick);
-        v.findViewById(R.id.postViewImageButton).setOnClickListener(this::handleCallClick);
-
+    private void loadPostData(View v) {
         TextView postViewTitleTextView = v.findViewById(R.id.postViewTitleTextView);
         TextView postViewSubtitleTextView = v.findViewById(R.id.postViewSubtitleTextView);
         TextView postViewDescriptionTextView = v.findViewById(R.id.postViewDescriptionTextView);
@@ -82,7 +91,38 @@ public class PostViewFragment extends Fragment {
                 .placeholder(circularProgressDrawable)
                 .into(postViewImageView);
 
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        View v = inflater.inflate(R.layout.fragment_post_view, container, false);
+
+        if (showEdit) {
+            v.findViewById(R.id.postViewEditPostFloatingActionButton).setVisibility(View.VISIBLE);
+        }
+
+        v.findViewById(R.id.postViewGoBackButton).setOnClickListener(this::handleGoBackToFeedClick);
+        v.findViewById(R.id.postViewImageButton).setOnClickListener(this::handleCallClick);
+        v.findViewById(R.id.postViewEditPostFloatingActionButton).setOnClickListener(this::handleEditClick);
+
+        loadPostData(v);
+
+
         return v;
+    }
+
+    private void handleEditClick(View r) {
+        if (!showEdit) {
+            return;
+        }
+
+        Intent i = new Intent(r.getContext(), NewPostActivity.class);
+        i.putExtra(ARG_POST, post);
+        i.putExtra(ARG_POST_ID, postId);
+
+        mStartForResult.launch(i);
     }
 
     private void handleGoBackToFeedClick(View r) {
