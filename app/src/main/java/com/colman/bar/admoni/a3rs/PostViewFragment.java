@@ -1,5 +1,6 @@
 package com.colman.bar.admoni.a3rs;
 
+import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
 
 import android.content.Intent;
@@ -53,10 +54,15 @@ public class PostViewFragment extends Fragment {
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
                     if (result.getResultCode() == RESULT_OK) {
+                        // Post update
                         Log.d(Consts.TAG, "Post Updated!");
                         Post updatedPost = (Post) result.getData().getExtras().getSerializable(ARG_POST);
                         post = updatedPost;
                         loadPostData();
+                    } else if (result.getResultCode() == RESULT_CANCELED) {
+                        // Post delete
+                        Log.d(Consts.TAG, "Post deleted!");
+                        Navigation.findNavController(getView()).popBackStack();
                     }
                 });
     }

@@ -1,5 +1,6 @@
 package com.colman.bar.admoni.a3rs;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
@@ -16,6 +17,7 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.swiperefreshlayout.widget.CircularProgressDrawable;
 
@@ -155,6 +157,40 @@ public class NewPostActivity extends AppCompatActivity {
                 finish();
             });
         });
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    public void handleDeleteClick(View v) {
+        AlertDialog.Builder alert = new AlertDialog.Builder(NewPostActivity.this);
+        alert.setTitle("Delete");
+        alert.setMessage("Are you sure you want to delete?");
+        alert.setPositiveButton("Yes", (dialog, which) -> {
+            Log.d(Consts.TAG, "Delete requested: " + postId);
+
+            showLoading();
+
+            dialog.dismiss();
+
+            CompletableFuture<Boolean> future  = PostProvider.deletePost(postId);
+
+            future.whenComplete((postID, err) -> {
+                if (err != null) {
+                    Log.w(Consts.TAG, "Error save post", err);
+                    hideLoading();
+                    Toast.makeText(NewPostActivity.this, "Failed to post product",
+                            Toast.LENGTH_SHORT).show();
+
+                    return;
+                }
+
+                Log.d(Consts.TAG, "Post was deleted: " + postID);
+                setResult(RESULT_CANCELED);
+                finish();
+            });
+        });
+        alert.setNegativeButton("No", (dialog, which) -> dialog.dismiss());
+        alert.show();
+
     }
 
     public void handleImageClick(View v) {
