@@ -9,18 +9,15 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.colman.bar.admoni.a3rs.adapters.PostAdapter;
-import com.colman.bar.admoni.a3rs.models.Post;
 import com.colman.bar.admoni.a3rs.providers.PostIdPair;
 import com.colman.bar.admoni.a3rs.providers.PostProvider;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -73,16 +70,6 @@ public class FeedFragment extends Fragment {
             loadData(v);
         });
 
-//        v.findViewById(R.id.goToPostButton).setOnClickListener(bV -> {
-//            Log.d(Consts.TAG, "CLICK!");
-//            Navigation.findNavController(bV).navigate(R.id.action_feedFragment_to_postViewFragment);
-//
-//        });
-//
-//        v.findViewById(R.id.logoffButton).setOnClickListener(this::handleLogoff);
-//        v.findViewById(R.id.loadDataButton).setOnClickListener(this::handleLoadData);
-//        v.findViewById(R.id.createDataButton).setOnClickListener(this::handleCreateData);
-
         return v;
     }
 
@@ -116,44 +103,6 @@ public class FeedFragment extends Fragment {
     @RequiresApi(api = Build.VERSION_CODES.N)
     public void loadData() {
         loadData(getView());
-    }
-
-
-    @RequiresApi(api = Build.VERSION_CODES.N)
-    public void handleLoadData(View v) {
-        Log.d(Consts.TAG, "Load data!!");
-
-        CompletableFuture<List<PostIdPair>> future = PostProvider.getPosts();
-        future.whenComplete((postPairs, err) -> {
-            if (err != null) {
-                Log.w(Consts.TAG, "Error getting documents.", err);
-                return;
-            }
-
-            for (PostIdPair postPair : postPairs) {
-                Log.d(Consts.TAG, "ID: " + postPair.getId() + "=" + postPair.getPost().toString());
-            }
-        });
-    }
-
-
-    @RequiresApi(api = Build.VERSION_CODES.N)
-    public void handleCreateData(View v) {
-        Log.d(Consts.TAG, "Create data!!");
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-
-        Post newPost = new Post("test title", "from code", "desc",
-                currentUser.getEmail(), currentUser.getPhoneNumber(), currentUser.getUid(), null, null, null);
-
-        CompletableFuture<String> future = PostProvider.savePost(newPost);
-        future.whenComplete((postID, err) -> {
-            if (err != null) {
-                Log.w(Consts.TAG, "Error save post", err);
-                return;
-            }
-
-            Log.d(Consts.TAG, "Post was saved: " + postID);
-        });
     }
 
 }

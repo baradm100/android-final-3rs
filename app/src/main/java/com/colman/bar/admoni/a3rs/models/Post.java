@@ -1,7 +1,6 @@
 package com.colman.bar.admoni.a3rs.models;
 
 import com.colman.bar.admoni.a3rs.utils.Convertors;
-import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.GeoPoint;
@@ -12,15 +11,15 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Post implements Serializable {
-    private String title;
-    private String subTitle;
-    private String description;
-    private String userName;
-    private String userPhone;
-    private String userUid;
-    private Date createdAt;
-    private String addressName;
-    private SerializableLatLng geoPoint;
+    private final String title;
+    private final String subTitle;
+    private final String description;
+    private final String userName;
+    private final String userPhone;
+    private final String userUid;
+    private final Date createdAt;
+    private final String addressName;
+    private final SerializableLatLng geoPoint;
 
     public static Post from(Map<String, Object> data) {
         String title = getValueFromMapSafely(data, "title");
