@@ -3,6 +3,12 @@ package com.colman.bar.admoni.a3rs;
 import static com.colman.bar.admoni.a3rs.Consts.TAG;
 import static com.colman.bar.admoni.a3rs.FeedFragment.ARG_IS_MY_FEED;
 
+import android.content.Intent;
+import android.os.Build;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.RequiresApi;
@@ -10,12 +16,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-
-import android.content.Intent;
-import android.os.Build;
-import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
 
 public class MyFeedActivity extends AppCompatActivity {
     private ActivityResultLauncher<Intent> mStartForResult;
@@ -63,7 +63,5 @@ public class MyFeedActivity extends AppCompatActivity {
         refreshLayout.setRefreshing(true);
         feedFragment.loadData();
     }
-
-
 
 }
