@@ -16,6 +16,7 @@ import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 import androidx.swiperefreshlayout.widget.CircularProgressDrawable;
@@ -24,7 +25,6 @@ import com.bumptech.glide.Glide;
 import com.colman.bar.admoni.a3rs.models.Post;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -46,7 +46,6 @@ public class PostViewFragment extends Fragment {
     private final FirebaseStorage storage = FirebaseStorage.getInstance();
     private ActivityResultLauncher<Intent> mStartForResult;
     MapView mMapView;
-    private GoogleMap googleMap;
 
 
     @Override

@@ -102,4 +102,32 @@ public class PostProvider {
 
         return future;
     }
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    public static CompletableFuture<List<PostIdPair>> getPostsForUser(String userUid) {
+        CompletableFuture<List<PostIdPair>> future = new CompletableFuture<>();
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        db.collection(Consts.POSTS_COLLECTION)
+                .orderBy("createdAt", Query.Direction.DESCENDING)
+                .whereEqualTo("userUid", userUid)
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        List<PostIdPair> postsPairs = new LinkedList<>();
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            postsPairs.add(new PostIdPair(document.getId(), Post.from(document.getData())));
+                        }
+                        future.complete(postsPairs);
+
+                    } else {
+                        Log.w(Consts.TAG, "Error getting documents.", task.getException());
+                        future.completeExceptionally(task.getException());
+                    }
+                });
+
+
+        return future;
+    }
+
 }

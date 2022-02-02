@@ -12,17 +12,25 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.3Rs">
         <activity
+            android:name=".MyFeedActivity"
+            android:exported="false"
+            android:label="3Rs - My Feed" />
+        <activity
             android:name=".NewPostActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:theme="@style/Theme.3Rs.NoTitle" />
         <activity
             android:name=".WelcomeActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:label="3Rs - Welcome" />
         <activity
             android:name=".FeedActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:theme="@style/Theme.3Rs.NoTitle" />
         <activity
             android:name=".MainActivity"
-            android:exported="true">
+            android:exported="true"
+            android:label="3Rs - Login">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -35,7 +43,6 @@
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
-
     </application>
 
 </manifest>
