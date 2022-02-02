@@ -47,6 +47,7 @@
             android:layout_marginStart="10dp"
             android:layout_marginBottom="5dp"
             android:backgroundTint="@android:color/transparent"
+            android:onClick="handleMyFeedClick"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:srcCompat="@drawable/ic_baseline_account_circle_24" />

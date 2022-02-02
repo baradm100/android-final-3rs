@@ -1,47 +1,41 @@
 package com.colman.bar.admoni.a3rs;
 
 import static com.colman.bar.admoni.a3rs.Consts.TAG;
-
-import android.content.Intent;
-import android.os.Build;
-import android.os.Bundle;
-import android.util.Log;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.Toast;
+import static com.colman.bar.admoni.a3rs.FeedFragment.ARG_IS_MY_FEED;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
+import android.content.Intent;
+import android.os.Build;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
 
-public class FeedActivity extends AppCompatActivity {
-    private final FirebaseAuth mAuth = FirebaseAuth.getInstance();
-
+public class MyFeedActivity extends AppCompatActivity {
     private ActivityResultLauncher<Intent> mStartForResult;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_feed);
-        FirebaseUser currentUser = mAuth.getCurrentUser();
+        setContentView(R.layout.activity_my_feed);
 
-        if (currentUser == null) {
-            Log.d(TAG, "User is NOT logged in!");
-            Toast.makeText(FeedActivity.this, "Authentication failed.",
-                    Toast.LENGTH_SHORT).show();
-            Intent i = new Intent(this, MainActivity.class);
-            i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            startActivity(i);
-            return;
-        }
+        Bundle myFeedBundle = new Bundle();
+        myFeedBundle.putBoolean(ARG_IS_MY_FEED, true);
 
+
+        // Set the normal navigation flow - but set it as my feed
+        NavHostFragment finalHost = NavHostFragment.create(R.navigation.my_nav, myFeedBundle);
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.myFeedFragmentContainerView, finalHost)
+                .setPrimaryNavigationFragment(finalHost) // equivalent to app:defaultNavHost="true"
+                .commit();
 
         mStartForResult = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
@@ -49,13 +43,14 @@ public class FeedActivity extends AppCompatActivity {
                     if (result.getResultCode() == RESULT_OK) {
                         Log.d(TAG, "Post created!");
                         loadNewData();
+                        setResult(RESULT_OK);
                     }
                 });
+
     }
 
-    public void handleMyFeedClick(View v) {
-        Log.d(TAG, "My feed click!");
-        Intent i = new Intent(this, MyFeedActivity.class);
+    public void handleAddClick(View v) {
+        Intent i = new Intent(this, NewPostActivity.class);
         mStartForResult.launch(i);
     }
 
@@ -69,16 +64,6 @@ public class FeedActivity extends AppCompatActivity {
         feedFragment.loadData();
     }
 
-    public void handleLogoff(View v) {
-        mAuth.signOut();
-        Intent i = new Intent(this, MainActivity.class);
-        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(i);
-    }
 
-    public void handleAddPostClick(View v) {
-        Intent i = new Intent(this, NewPostActivity.class);
-        mStartForResult.launch(i);
-    }
 
 }

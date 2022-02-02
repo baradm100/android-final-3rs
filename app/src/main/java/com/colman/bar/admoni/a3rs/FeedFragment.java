@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -21,7 +22,6 @@ import com.colman.bar.admoni.a3rs.providers.PostProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-import java.util.Date;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
@@ -29,12 +29,27 @@ import java.util.concurrent.CompletableFuture;
  * A simple {@link Fragment} subclass.
  */
 public class FeedFragment extends Fragment {
+    public static final String ARG_IS_MY_FEED = "isMyFeed";
+
     private final FirebaseAuth mAuth = FirebaseAuth.getInstance();
     private RecyclerView postsList;
     private PostAdapter postAdapter;
+    private boolean isMyFeed = false;
 
     public FeedFragment() {
         // Required empty public constructor
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        isMyFeed = false;
+
+        if (getArguments() != null) {
+            Log.d(Consts.TAG, "FeedFragment got args!");
+            isMyFeed = getArguments().getBoolean(ARG_IS_MY_FEED);
+            Log.d(Consts.TAG, "isMyFeed=" + isMyFeed);
+        }
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -74,8 +89,9 @@ public class FeedFragment extends Fragment {
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void loadData(View v) {
         SwipeRefreshLayout swipeRefreshLayout = v.findViewById(R.id.postsSwipeRefreshLayout);
+        String userUid = mAuth.getCurrentUser().getUid();
 
-        CompletableFuture<List<PostIdPair>> future = PostProvider.getPosts();
+        CompletableFuture<List<PostIdPair>> future = isMyFeed ? PostProvider.getPostsForUser(userUid) : PostProvider.getPosts();
         future.whenComplete((postPairs, err) -> {
             swipeRefreshLayout.setRefreshing(false);
 
