@@ -76,11 +76,13 @@ public class FeedFragment extends Fragment {
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void loadData(View v) {
         SwipeRefreshLayout swipeRefreshLayout = v.findViewById(R.id.postsSwipeRefreshLayout);
+        SwipeRefreshLayout postsEmptySwipeRefreshLayout = v.findViewById(R.id.postsEmptySwipeRefreshLayout);
         String userUid = mAuth.getCurrentUser().getUid();
 
         CompletableFuture<List<PostIdPair>> future = isMyFeed ? PostProvider.getPostsForUser(userUid) : PostProvider.getPosts();
         future.whenComplete((postPairs, err) -> {
             swipeRefreshLayout.setRefreshing(false);
+            postsEmptySwipeRefreshLayout.setRefreshing(false);
 
             if (err != null) {
                 Log.w(Consts.TAG, "Error getting documents.", err);
@@ -92,9 +94,12 @@ public class FeedFragment extends Fragment {
             }
 
             postAdapter.setPosts(postPairs);
-
-            for (PostIdPair postPair : postPairs) {
-                Log.d(Consts.TAG, "ID: " + postPair.getId() + "=" + postPair.getPost().toString());
+            if (postPairs.isEmpty()) {
+                swipeRefreshLayout.setVisibility(View.GONE);
+                postsEmptySwipeRefreshLayout.setVisibility(View.VISIBLE);
+            } else {
+                postsEmptySwipeRefreshLayout.setVisibility(View.GONE);
+                swipeRefreshLayout.setVisibility(View.VISIBLE);
             }
         });
 
