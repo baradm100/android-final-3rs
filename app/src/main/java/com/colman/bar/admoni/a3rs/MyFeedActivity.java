@@ -14,6 +14,7 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
+import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
@@ -58,6 +59,13 @@ public class MyFeedActivity extends AppCompatActivity {
     private void loadNewData() {
         FragmentManager fm = getSupportFragmentManager();
         // Is it a hack? Yes, Does it work? Yes!
+        String currentView = fm.getFragments().get(0).getChildFragmentManager().getFragments().get(0).getClass().getName();
+        if ("com.colman.bar.admoni.a3rs.PostViewFragment".equals(currentView)) {
+            PostViewFragment postViewFragment = (PostViewFragment) fm.getFragments().get(0).getChildFragmentManager().getFragments().get(0);
+            Navigation.findNavController(postViewFragment.getView()).popBackStack();
+            return;
+        }
+
         FeedFragment feedFragment = (FeedFragment) fm.getFragments().get(0).getChildFragmentManager().getFragments().get(0);
         SwipeRefreshLayout refreshLayout = findViewById(R.id.postsSwipeRefreshLayout);
         refreshLayout.setRefreshing(true);
