@@ -18,7 +18,7 @@ public class Convertors {
             return null;
         }
 
-        return new SerializableLatLng(new LatLng(geoPoint.getLatitude(), geoPoint.getLatitude()));
+        return new SerializableLatLng(new LatLng(geoPoint.getLatitude(), geoPoint.getLongitude()));
 
     }
 }
