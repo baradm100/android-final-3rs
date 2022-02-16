@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.colman.bar.admoni.a3rs.models.UserModel;
 import com.colman.bar.admoni.a3rs.utils.StringsUtil;
 import com.google.android.libraries.places.api.Places;
 import com.google.firebase.auth.FirebaseAuth;
@@ -49,8 +50,8 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_main);
 
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-        if (currentUser != null) {
+
+        if (UserModel.instance.isLoggedIn()) {
             Log.d(Consts.TAG, "User is logged in!");
             moveToFeed();
             return;
@@ -161,12 +162,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void moveToFeed() {
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-        if (currentUser == null) {
+
+        if (UserModel.instance.isLoggedIn()) {
             return;
         }
 
-        if (currentUser.getDisplayName() == null || StringsUtil.isEmpty(currentUser.getDisplayName())) {
+        if (UserModel.instance.getDisplayName() == null || StringsUtil.isEmpty(UserModel.instance.getDisplayName())) {
             Intent i = new Intent(this, WelcomeActivity.class);
             i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(i);
