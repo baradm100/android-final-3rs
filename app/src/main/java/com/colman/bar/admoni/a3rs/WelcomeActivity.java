@@ -11,13 +11,13 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.colman.bar.admoni.a3rs.models.UserModel;
 import com.colman.bar.admoni.a3rs.utils.StringsUtil;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
 
 public class WelcomeActivity extends AppCompatActivity {
-    private final FirebaseAuth mAuth = FirebaseAuth.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,23 +44,19 @@ public class WelcomeActivity extends AppCompatActivity {
 
         showLoading();
 
-        UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
-                .setDisplayName(name)
-                .build();
-        FirebaseUser user = mAuth.getCurrentUser();
+        UserModel.instance.updateDisplayName(name, new UserModel.UpdateDisplayNameListener() {
+            @Override
+            public void onComplete() {
+                moveToFeed();
+            }
 
-        user.updateProfile(profileUpdates)
-                .addOnCompleteListener(this, (task) -> {
-                    if (task.isSuccessful()) {
-                        moveToFeed();
-                    } else {
-                        hideLoading();
-                        Log.w(Consts.TAG, "updateUser:failure", task.getException());
-                        Toast.makeText(WelcomeActivity.this, "Update info failed.",
-                                Toast.LENGTH_SHORT).show();
-                    }
-                });
-
+            @Override
+            public void onError() {
+                hideLoading();
+                Toast.makeText(WelcomeActivity.this, "Update info failed.",
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void moveToFeed() {

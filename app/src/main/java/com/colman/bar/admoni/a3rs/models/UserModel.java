@@ -10,9 +10,12 @@ import androidx.core.os.HandlerCompat;
 
 import com.colman.bar.admoni.a3rs.Consts;
 import com.colman.bar.admoni.a3rs.MainActivity;
+import com.colman.bar.admoni.a3rs.WelcomeActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
 
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -48,8 +51,6 @@ public class UserModel {
                         }
                     }
                 });
-
-
     }
 
     public void signUp(String email, String password, SignUpListener listener) {
@@ -71,6 +72,23 @@ public class UserModel {
                 });
     }
 
+    public void updateDisplayName(String displayName, UpdateDisplayNameListener listener) {
+        modelFirebase.mAuth.getCurrentUser().updateProfile(new UserProfileChangeRequest.Builder().setDisplayName(displayName).build())
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            Log.d(Consts.TAG, "updateDisplayName:success");
+                            listener.onComplete();
+                        } else {
+
+                            Log.w(Consts.TAG, "updateUser:failure", task.getException());
+                            listener.onError();
+                        }
+                    }
+                });
+    }
+
     public interface SignInListener {
         void onComplete();
 
@@ -78,6 +96,12 @@ public class UserModel {
     }
 
     public interface SignUpListener {
+        void onComplete();
+
+        void onError();
+    }
+
+    public interface UpdateDisplayNameListener {
         void onComplete();
 
         void onError();
