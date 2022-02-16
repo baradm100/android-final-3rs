@@ -7,8 +7,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 public class ModelFirebase {
-    private final FirebaseAuth mAuth = FirebaseAuth.getInstance();
-    FirebaseUser currentUser = mAuth.getCurrentUser();
+    public final FirebaseAuth mAuth = FirebaseAuth.getInstance();
+
 
 
 }
