@@ -35,6 +35,10 @@ public class UserModel {
         return modelFirebase.mAuth.getCurrentUser().getDisplayName();
     }
 
+    public String getUid() {
+        return modelFirebase.mAuth.getCurrentUser().getUid();
+    }
+
     public void signIn(String email, String password, SignInListener listener) {
         modelFirebase.mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
@@ -72,7 +76,7 @@ public class UserModel {
                 });
     }
 
-    public void signOut(){
+    public void signOut() {
         modelFirebase.mAuth.signOut();
     }
 
