@@ -7,9 +7,11 @@ import androidx.annotation.RequiresApi;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import java.io.Serializable;
 import java.util.function.Consumer;
 
-public class PostImage {
+public class PostImage implements Serializable {
+    private static final ModelFirebase modelFirebase = new ModelFirebase();
 
     public static class PostImageSuccessResponse {
         private final long totalByteCount;
@@ -24,7 +26,6 @@ public class PostImage {
     }
 
     private final String postId;
-    private final ModelFirebase modelFirebase = new ModelFirebase();
 
     public PostImage(String postId) {
         this.postId = postId;

@@ -137,7 +137,7 @@ public class NewPostActivity extends AppCompatActivity {
                 null, // Will be set by the backend
                 newPostAdressEditText.getText().toString(),
                 new SerializableLatLng(latLng),
-                null);
+                postId);
 
 
         CompletableFuture<String> future;

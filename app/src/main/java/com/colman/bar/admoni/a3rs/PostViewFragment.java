@@ -96,7 +96,6 @@ public class PostViewFragment extends Fragment {
                 .load(post.getImage().getDrawable())
                 .placeholder(circularProgressDrawable)
                 .into(postViewImageView);
-
     }
 
     @Override
