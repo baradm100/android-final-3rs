@@ -161,9 +161,13 @@ public class Post implements Serializable {
         sb.append("\n\tcreatedAt=");
         sb.append(createdAt);
 
+        sb.append("\n\tid=");
+        sb.append(id);
+
+        sb.append("\n\tgeoPoint=");
+        sb.append(geoPoint.toString());
 
         sb.append("\n}");
-
 
         return sb.toString();
     }
