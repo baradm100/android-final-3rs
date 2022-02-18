@@ -20,8 +20,10 @@ public class Post implements Serializable {
     private final Date createdAt;
     private final String addressName;
     private final SerializableLatLng geoPoint;
+    private final String id;
+    private PostImage image;
 
-    public static Post from(Map<String, Object> data) {
+    public static Post from(Map<String, Object> data, String id) {
         String title = getValueFromMapSafely(data, "title");
         String subTitle = getValueFromMapSafely(data, "subTitle");
         String description = getValueFromMapSafely(data, "description");
@@ -32,7 +34,7 @@ public class Post implements Serializable {
         String addressName = getValueFromMapSafely(data, "addressName");
         SerializableLatLng geoPoint = Convertors.convertGeoPointToLatLng(getGeoPointFromMapSafely(data, "geoPoint"));
 
-        return new Post(title, subTitle, description, userName, userPhone, userUid, createdAt, addressName, geoPoint);
+        return new Post(title, subTitle, description, userName, userPhone, userUid, createdAt, addressName, geoPoint, id);
     }
 
     private static GeoPoint getGeoPointFromMapSafely(Map<String, Object> data, String key) {
@@ -61,7 +63,7 @@ public class Post implements Serializable {
     }
 
     public Post(String title, String subTitle, String description, String userName, String userPhone,
-                String userUid, Date createdAt, String addressName, SerializableLatLng geoPoint) {
+                String userUid, Date createdAt, String addressName, SerializableLatLng geoPoint, String id) {
         this.title = title;
         this.subTitle = subTitle;
         this.description = description;
@@ -71,6 +73,7 @@ public class Post implements Serializable {
         this.createdAt = createdAt;
         this.addressName = addressName;
         this.geoPoint = geoPoint;
+        this.id = id;
     }
 
     public Map<String, Object> to() {
@@ -124,6 +127,14 @@ public class Post implements Serializable {
 
     public String getAddressName() {
         return addressName;
+    }
+
+    public PostImage getImage() {
+        if (image != null) {
+            return image;
+        }
+        image = new PostImage(id);
+        return image;
     }
 
     @Override
