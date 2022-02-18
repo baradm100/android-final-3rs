@@ -17,8 +17,6 @@ import com.colman.bar.admoni.a3rs.PostViewFragment;
 import com.colman.bar.admoni.a3rs.R;
 import com.colman.bar.admoni.a3rs.models.Post;
 import com.colman.bar.admoni.a3rs.providers.PostIdPair;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
 
 import java.util.Collections;
 import java.util.List;
@@ -53,7 +51,6 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.CardViewHolder
     }
 
     class CardViewHolder extends RecyclerView.ViewHolder {
-        private final FirebaseStorage storage = FirebaseStorage.getInstance();
 
         private View itemView;
         private TextView titleTextView;
@@ -74,8 +71,6 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.CardViewHolder
             this.titleTextView.setText(post.getTitle());
             this.subTitleTextView.setText(post.getSubTitle());
 
-            StorageReference storageRef = storage.getReference();
-            StorageReference productImageRef = storageRef.child("images/" + postIdPair.getId() + ".jpg");
 
             CircularProgressDrawable circularProgressDrawable = new CircularProgressDrawable(itemView.getContext());
             circularProgressDrawable.setStrokeWidth(5);
@@ -83,7 +78,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.CardViewHolder
             circularProgressDrawable.start();
 
             Glide.with(itemView.getContext())
-                    .load(productImageRef)
+                    .load(postIdPair.getPost().getImage().getDrawable())
                     .placeholder(circularProgressDrawable)
                     .into(postImageView);
 

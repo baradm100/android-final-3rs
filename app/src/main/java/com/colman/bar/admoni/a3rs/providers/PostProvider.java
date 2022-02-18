@@ -89,7 +89,7 @@ public class PostProvider {
                     if (task.isSuccessful()) {
                         List<PostIdPair> postsPairs = new LinkedList<>();
                         for (QueryDocumentSnapshot document : task.getResult()) {
-                            postsPairs.add(new PostIdPair(document.getId(), Post.from(document.getData())));
+                            postsPairs.add(new PostIdPair(document.getId(), Post.from(document.getData(), document.getId())));
                         }
                         future.complete(postsPairs);
 
@@ -116,7 +116,7 @@ public class PostProvider {
                     if (task.isSuccessful()) {
                         List<PostIdPair> postsPairs = new LinkedList<>();
                         for (QueryDocumentSnapshot document : task.getResult()) {
-                            postsPairs.add(new PostIdPair(document.getId(), Post.from(document.getData())));
+                            postsPairs.add(new PostIdPair(document.getId(), Post.from(document.getData(), document.getId())));
                         }
                         future.complete(postsPairs);
 

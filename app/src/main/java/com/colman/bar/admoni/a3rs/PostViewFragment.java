@@ -28,8 +28,6 @@ import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -42,7 +40,6 @@ public class PostViewFragment extends Fragment {
     private String postId;
     private Post post;
     private boolean showEdit;
-    private final FirebaseStorage storage = FirebaseStorage.getInstance();
     private ActivityResultLauncher<Intent> mStartForResult;
     MapView mMapView;
 
@@ -90,19 +87,15 @@ public class PostViewFragment extends Fragment {
         postViewDescriptionTextView.setText(post.getDescription());
         postViewUserEditText.setText(post.getUserName());
 
-        StorageReference storageRef = storage.getReference();
-        StorageReference productImageRef = storageRef.child("images/" + postId + ".jpg");
-
         CircularProgressDrawable circularProgressDrawable = new CircularProgressDrawable(v.getContext());
         circularProgressDrawable.setStrokeWidth(5);
         circularProgressDrawable.setCenterRadius(30);
         circularProgressDrawable.start();
 
         Glide.with(this)
-                .load(productImageRef)
+                .load(post.getImage().getDrawable())
                 .placeholder(circularProgressDrawable)
                 .into(postViewImageView);
-
     }
 
     @Override
