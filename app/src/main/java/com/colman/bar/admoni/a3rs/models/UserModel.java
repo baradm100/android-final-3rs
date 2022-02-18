@@ -72,6 +72,10 @@ public class UserModel {
                 });
     }
 
+    public void signOut(){
+        modelFirebase.mAuth.signOut();
+    }
+
     public void updateDisplayName(String displayName, UpdateDisplayNameListener listener) {
         modelFirebase.mAuth.getCurrentUser().updateProfile(new UserProfileChangeRequest.Builder().setDisplayName(displayName).build())
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
