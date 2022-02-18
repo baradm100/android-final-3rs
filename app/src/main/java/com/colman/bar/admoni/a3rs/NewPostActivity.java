@@ -25,6 +25,7 @@ import androidx.swiperefreshlayout.widget.CircularProgressDrawable;
 import com.bumptech.glide.Glide;
 import com.colman.bar.admoni.a3rs.models.Post;
 import com.colman.bar.admoni.a3rs.models.SerializableLatLng;
+import com.colman.bar.admoni.a3rs.models.UserModel;
 import com.colman.bar.admoni.a3rs.providers.PostProvider;
 import com.colman.bar.admoni.a3rs.utils.StringsUtil;
 import com.google.android.gms.common.api.Status;
@@ -50,8 +51,6 @@ public class NewPostActivity extends AppCompatActivity {
     public final static String ARG_POST_ID = "postId";
     private final static int SELECT_PICTURE = 200;
 
-
-    private final FirebaseAuth mAuth = FirebaseAuth.getInstance();
     private final FirebaseStorage storage = FirebaseStorage.getInstance();
     private String postId;
     private Post postToEdit;
@@ -135,14 +134,13 @@ public class NewPostActivity extends AppCompatActivity {
         EditText newPostPhoneEditText = findViewById(R.id.newPostPhoneEditText);
         EditText newPostAdressEditText = findViewById(R.id.newPostAdressEditText);
         ImageView newPostImageView = findViewById(R.id.newPostImageView);
-        FirebaseUser currentUser = mAuth.getCurrentUser();
 
         Post newPost = new Post(newPostPostTitleEditText.getText().toString(),
                 newPostPostSubTitleEditText.getText().toString(),
                 newPostDescriptionEditText.getText().toString(),
-                currentUser.getDisplayName(),
+                UserModel.instance.getDisplayName(),
                 newPostPhoneEditText.getText().toString(),
-                currentUser.getUid(),
+                UserModel.instance.getUid(),
                 null, // Will be set by the backend
                 newPostAdressEditText.getText().toString(),
                 new SerializableLatLng(latLng));
