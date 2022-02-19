@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.colman.bar.admoni.a3rs.models.UserModel;
 import com.colman.bar.admoni.a3rs.utils.StringsUtil;
 import com.google.android.libraries.places.api.Places;
 import com.google.firebase.auth.FirebaseAuth;
@@ -49,8 +50,8 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_main);
 
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-        if (currentUser != null) {
+
+        if (UserModel.instance.isLoggedIn()) {
             Log.d(Consts.TAG, "User is logged in!");
             moveToFeed();
             return;
@@ -75,20 +76,20 @@ public class MainActivity extends AppCompatActivity {
 
             showLoading(emailTextEdit, passwordEditText, loginProgressBar, loginButton, registerButton);
 
-            mAuth.signInWithEmailAndPassword(email, password)
-                    .addOnCompleteListener(this, task -> {
-                        if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
-                            Log.d(Consts.TAG, "signInWithEmail:success");
-                            moveToFeed();
-                        } else {
-                            // If sign in fails, display a message to the user.
-                            Log.w(Consts.TAG, "signInWithEmail:failure", task.getException());
-                            Toast.makeText(MainActivity.this, "Authentication failed.",
-                                    Toast.LENGTH_SHORT).show();
-                            hideLoading(emailTextEdit, passwordEditText, loginProgressBar, loginButton, registerButton);
-                        }
-                    });
+            UserModel.instance.signIn(email, password, new UserModel.SignInListener() {
+                @Override
+                public void onComplete() {
+                    moveToFeed();
+                }
+
+                @Override
+                public void onError() {
+                    Toast.makeText(MainActivity.this, "Authentication failed.",
+                            Toast.LENGTH_SHORT).show();
+                    hideLoading(emailTextEdit, passwordEditText, loginProgressBar, loginButton, registerButton);
+                }
+            });
+
         });
 
         registerButton.setOnClickListener(v -> {
@@ -101,20 +102,20 @@ public class MainActivity extends AppCompatActivity {
 
             showLoading(emailTextEdit, passwordEditText, loginProgressBar, loginButton, registerButton);
 
-            mAuth.createUserWithEmailAndPassword(email, password)
-                    .addOnCompleteListener(this, task -> {
-                        if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
-                            Log.d(Consts.TAG, "createUserWithEmail:success");
-                            moveToFeed();
-                        } else {
-                            // If sign in fails, display a message to the user.
-                            Log.w(Consts.TAG, "createUserWithEmail:failure", task.getException());
-                            Toast.makeText(MainActivity.this, "Authentication failed.",
-                                    Toast.LENGTH_SHORT).show();
-                            hideLoading(emailTextEdit, passwordEditText, loginProgressBar, loginButton, registerButton);
-                        }
-                    });
+            UserModel.instance.signUp(email, password, new UserModel.SignUpListener() {
+                @Override
+                public void onComplete() {
+                    moveToFeed();
+                }
+
+                @Override
+                public void onError() {
+                    Toast.makeText(MainActivity.this, "Authentication failed.",
+                            Toast.LENGTH_SHORT).show();
+                    hideLoading(emailTextEdit, passwordEditText, loginProgressBar, loginButton, registerButton);
+                }
+            });
+
         });
     }
 
@@ -161,12 +162,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void moveToFeed() {
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-        if (currentUser == null) {
+
+        if (UserModel.instance.isLoggedIn() == false) {
             return;
         }
 
-        if (currentUser.getDisplayName() == null || StringsUtil.isEmpty(currentUser.getDisplayName())) {
+        if (UserModel.instance.getDisplayName() == null || StringsUtil.isEmpty(UserModel.instance.getDisplayName())) {
             Intent i = new Intent(this, WelcomeActivity.class);
             i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(i);

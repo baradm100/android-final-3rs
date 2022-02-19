@@ -24,8 +24,10 @@ import androidx.swiperefreshlayout.widget.CircularProgressDrawable;
 
 import com.bumptech.glide.Glide;
 import com.colman.bar.admoni.a3rs.models.Post;
+import com.colman.bar.admoni.a3rs.models.PostImage;
 import com.colman.bar.admoni.a3rs.models.SerializableLatLng;
-import com.colman.bar.admoni.a3rs.providers.PostProvider;
+import com.colman.bar.admoni.a3rs.models.UserModel;
+import com.colman.bar.admoni.a3rs.models.PostProvider;
 import com.colman.bar.admoni.a3rs.utils.StringsUtil;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.maps.model.LatLng;
@@ -33,11 +35,6 @@ import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.widget.Autocomplete;
 import com.google.android.libraries.places.widget.AutocompleteActivity;
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
 import java.util.Arrays;
@@ -50,9 +47,6 @@ public class NewPostActivity extends AppCompatActivity {
     public final static String ARG_POST_ID = "postId";
     private final static int SELECT_PICTURE = 200;
 
-
-    private final FirebaseAuth mAuth = FirebaseAuth.getInstance();
-    private final FirebaseStorage storage = FirebaseStorage.getInstance();
     private String postId;
     private Post postToEdit;
     private LatLng latLng;
@@ -97,8 +91,6 @@ public class NewPostActivity extends AppCompatActivity {
         newPostDescriptionEditText.setText(postToEdit.getDescription());
         newPostPhoneEditText.setText(postToEdit.getUserPhone());
         newPostAdressEditText.setText(postToEdit.getAddressName());
-        StorageReference storageRef = storage.getReference();
-        StorageReference productImageRef = storageRef.child("images/" + postId + ".jpg");
 
         CircularProgressDrawable circularProgressDrawable = new CircularProgressDrawable(this);
         circularProgressDrawable.setStrokeWidth(5);
@@ -106,7 +98,7 @@ public class NewPostActivity extends AppCompatActivity {
         circularProgressDrawable.start();
 
         Glide.with(this)
-                .load(productImageRef)
+                .load(postToEdit.getImage().getDrawable())
                 .placeholder(circularProgressDrawable)
                 .into(newPostImageView);
 
@@ -135,17 +127,17 @@ public class NewPostActivity extends AppCompatActivity {
         EditText newPostPhoneEditText = findViewById(R.id.newPostPhoneEditText);
         EditText newPostAdressEditText = findViewById(R.id.newPostAdressEditText);
         ImageView newPostImageView = findViewById(R.id.newPostImageView);
-        FirebaseUser currentUser = mAuth.getCurrentUser();
 
         Post newPost = new Post(newPostPostTitleEditText.getText().toString(),
                 newPostPostSubTitleEditText.getText().toString(),
                 newPostDescriptionEditText.getText().toString(),
-                currentUser.getDisplayName(),
+                UserModel.instance.getDisplayName(),
                 newPostPhoneEditText.getText().toString(),
-                currentUser.getUid(),
+                UserModel.instance.getUid(),
                 null, // Will be set by the backend
                 newPostAdressEditText.getText().toString(),
-                new SerializableLatLng(latLng));
+                new SerializableLatLng(latLng),
+                postId);
 
 
         CompletableFuture<String> future;
@@ -171,23 +163,19 @@ public class NewPostActivity extends AppCompatActivity {
             Bitmap bitmap = ((BitmapDrawable) newPostImageView.getDrawable()).getBitmap();
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+            PostImage postImage = new PostImage(postID);
             byte[] data = baos.toByteArray();
-            StorageReference storageRef = storage.getReference();
-            StorageReference productImageRef = storageRef.child("images/" + postID + ".jpg");
-
-            UploadTask uploadTask = productImageRef.putBytes(data);
-
-            uploadTask.addOnFailureListener(e -> {
-                Log.w(TAG, "Failed to upload a file", e);
-            }).addOnSuccessListener(snap -> {
-                Log.w(TAG, "Image uploaded: " + snap.getTotalByteCount());
-                Toast.makeText(NewPostActivity.this, "Product was posted!",
-                        Toast.LENGTH_SHORT).show();
-                Intent resultData = new Intent(this, NewPostActivity.class);
-                resultData.putExtra(ARG_POST, newPost);
-                setResult(RESULT_OK, resultData);
-                finish();
-            });
+            postImage.uploadImage(data,
+                    e -> Log.w(TAG, "Failed to upload a file", e),
+                    snap -> {
+                        Log.w(TAG, "Image uploaded: " + snap.getTotalByteCount());
+                        Toast.makeText(NewPostActivity.this, "Product was posted!",
+                                Toast.LENGTH_SHORT).show();
+                        Intent resultData = new Intent(this, NewPostActivity.class);
+                        resultData.putExtra(ARG_POST, newPost);
+                        setResult(RESULT_OK, resultData);
+                        finish();
+                    });
         });
     }
 
@@ -216,21 +204,17 @@ public class NewPostActivity extends AppCompatActivity {
                 }
 
                 Log.d(TAG, "Post was deleted: " + postID);
-
-                StorageReference storageRef = storage.getReference();
-                StorageReference productImageRef = storageRef.child("images/" + postId + ".jpg");
-                productImageRef.delete().addOnSuccessListener(aVoid -> {
-                    Log.d(TAG, "Image was deleted");
-                    setResult(RESULT_CANCELED);
-                    finish();
-                }).addOnFailureListener(error -> {
+                PostImage deletedPostImage = new PostImage(postId);
+                deletedPostImage.deleteImage(error -> {
                     // Silent failure
                     Log.w(TAG, "Image failed", error);
                     setResult(RESULT_CANCELED);
                     finish();
+                }, () -> {
+                    Log.d(TAG, "Image was deleted");
+                    setResult(RESULT_CANCELED);
+                    finish();
                 });
-
-
             });
         });
         alert.setNegativeButton("No", (dialog, which) -> dialog.dismiss());

@@ -17,11 +17,11 @@ import androidx.fragment.app.FragmentManager;
 import androidx.navigation.Navigation;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.colman.bar.admoni.a3rs.models.UserModel;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 public class FeedActivity extends AppCompatActivity {
-    private final FirebaseAuth mAuth = FirebaseAuth.getInstance();
 
     private ActivityResultLauncher<Intent> mStartForResult;
 
@@ -30,9 +30,9 @@ public class FeedActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_feed);
-        FirebaseUser currentUser = mAuth.getCurrentUser();
 
-        if (currentUser == null) {
+
+        if (!UserModel.instance.isLoggedIn()) {
             Log.d(TAG, "User is NOT logged in!");
             Toast.makeText(FeedActivity.this, "Authentication failed.",
                     Toast.LENGTH_SHORT).show();
@@ -77,7 +77,7 @@ public class FeedActivity extends AppCompatActivity {
     }
 
     public void handleLogoff(View v) {
-        mAuth.signOut();
+        UserModel.instance.signOut();
         Intent i = new Intent(this, MainActivity.class);
         i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(i);

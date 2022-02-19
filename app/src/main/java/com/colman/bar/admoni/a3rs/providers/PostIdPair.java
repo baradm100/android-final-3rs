@@ -2,6 +2,8 @@ package com.colman.bar.admoni.a3rs.providers;
 
 import com.colman.bar.admoni.a3rs.models.Post;
 
+import java.util.Date;
+
 public class PostIdPair {
     private final String id;
     private final Post post;
@@ -17,5 +19,9 @@ public class PostIdPair {
 
     public Post getPost() {
         return post;
+    }
+
+    public Date getPostCreatedAt() {
+        return post.getCreatedAt();
     }
 }

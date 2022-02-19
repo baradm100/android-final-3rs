@@ -1,5 +1,9 @@
 package com.colman.bar.admoni.a3rs.models;
 
+import androidx.annotation.NonNull;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
+
 import com.colman.bar.admoni.a3rs.utils.Convertors;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.FieldValue;
@@ -10,7 +14,12 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+@Entity
 public class Post implements Serializable {
+    @PrimaryKey
+    @NonNull
+    private final String id;
+
     private final String title;
     private final String subTitle;
     private final String description;
@@ -20,8 +29,9 @@ public class Post implements Serializable {
     private final Date createdAt;
     private final String addressName;
     private final SerializableLatLng geoPoint;
+    private transient PostImage image;
 
-    public static Post from(Map<String, Object> data) {
+    public static Post from(Map<String, Object> data, String id) {
         String title = getValueFromMapSafely(data, "title");
         String subTitle = getValueFromMapSafely(data, "subTitle");
         String description = getValueFromMapSafely(data, "description");
@@ -32,7 +42,7 @@ public class Post implements Serializable {
         String addressName = getValueFromMapSafely(data, "addressName");
         SerializableLatLng geoPoint = Convertors.convertGeoPointToLatLng(getGeoPointFromMapSafely(data, "geoPoint"));
 
-        return new Post(title, subTitle, description, userName, userPhone, userUid, createdAt, addressName, geoPoint);
+        return new Post(title, subTitle, description, userName, userPhone, userUid, createdAt, addressName, geoPoint, id);
     }
 
     private static GeoPoint getGeoPointFromMapSafely(Map<String, Object> data, String key) {
@@ -61,7 +71,7 @@ public class Post implements Serializable {
     }
 
     public Post(String title, String subTitle, String description, String userName, String userPhone,
-                String userUid, Date createdAt, String addressName, SerializableLatLng geoPoint) {
+                String userUid, Date createdAt, String addressName, SerializableLatLng geoPoint, String id) {
         this.title = title;
         this.subTitle = subTitle;
         this.description = description;
@@ -71,6 +81,7 @@ public class Post implements Serializable {
         this.createdAt = createdAt;
         this.addressName = addressName;
         this.geoPoint = geoPoint;
+        this.id = id;
     }
 
     public Map<String, Object> to() {
@@ -126,6 +137,22 @@ public class Post implements Serializable {
         return addressName;
     }
 
+    public PostImage getImage() {
+        if (image != null) {
+            return image;
+        }
+        image = new PostImage(id);
+        return image;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("Post {");
@@ -150,9 +177,13 @@ public class Post implements Serializable {
         sb.append("\n\tcreatedAt=");
         sb.append(createdAt);
 
+        sb.append("\n\tid=");
+        sb.append(id);
+
+        sb.append("\n\tgeoPoint=");
+        sb.append(geoPoint.toString());
 
         sb.append("\n}");
-
 
         return sb.toString();
     }

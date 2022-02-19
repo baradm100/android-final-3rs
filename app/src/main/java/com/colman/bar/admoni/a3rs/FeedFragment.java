@@ -15,9 +15,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.colman.bar.admoni.a3rs.adapters.PostAdapter;
+import com.colman.bar.admoni.a3rs.models.PostProvider;
+import com.colman.bar.admoni.a3rs.models.UserModel;
 import com.colman.bar.admoni.a3rs.providers.PostIdPair;
-import com.colman.bar.admoni.a3rs.providers.PostProvider;
-import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -28,7 +28,6 @@ import java.util.concurrent.CompletableFuture;
 public class FeedFragment extends Fragment {
     public static final String ARG_IS_MY_FEED = "isMyFeed";
 
-    private final FirebaseAuth mAuth = FirebaseAuth.getInstance();
     private RecyclerView postsList;
     private PostAdapter postAdapter;
     private boolean isMyFeed = false;
@@ -61,7 +60,6 @@ public class FeedFragment extends Fragment {
         postsList.setAdapter(postAdapter);
         postsList.setLayoutManager(new LinearLayoutManager(this.getContext()));
 
-
         SwipeRefreshLayout swipeRefreshLayout = v.findViewById(R.id.postsSwipeRefreshLayout);
         swipeRefreshLayout.setRefreshing(true);
         loadData(v);
@@ -77,7 +75,7 @@ public class FeedFragment extends Fragment {
     private void loadData(View v) {
         SwipeRefreshLayout swipeRefreshLayout = v.findViewById(R.id.postsSwipeRefreshLayout);
         SwipeRefreshLayout postsEmptySwipeRefreshLayout = v.findViewById(R.id.postsEmptySwipeRefreshLayout);
-        String userUid = mAuth.getCurrentUser().getUid();
+        String userUid = UserModel.instance.getUid();
 
         CompletableFuture<List<PostIdPair>> future = isMyFeed ? PostProvider.getPostsForUser(userUid) : PostProvider.getPosts();
         future.whenComplete((postPairs, err) -> {
@@ -93,7 +91,9 @@ public class FeedFragment extends Fragment {
                 return;
             }
 
-            postAdapter.setPosts(postPairs);
+            // Run on the UI thread to update the view
+            getActivity().runOnUiThread(() -> postAdapter.setPosts(postPairs));
+
             if (postPairs.isEmpty()) {
                 swipeRefreshLayout.setVisibility(View.GONE);
                 postsEmptySwipeRefreshLayout.setVisibility(View.VISIBLE);
