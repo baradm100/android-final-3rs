@@ -16,8 +16,8 @@ public interface PostDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertAll(Post... posts);
 
-    @Delete
-    void delete(Post student);
+    @Query("delete from Post where id=:id")
+    void delete(String id);
 
     @Query("delete from Post")
     void deleteAll();

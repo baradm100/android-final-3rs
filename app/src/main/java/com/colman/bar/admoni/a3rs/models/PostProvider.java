@@ -74,7 +74,10 @@ public class PostProvider {
                 .delete()
                 .addOnSuccessListener(documentReference -> {
                     Log.d(Consts.TAG, "DocumentSnapshot deleted with ID: " + postId);
-                    future.complete(true);
+                    executor.execute(() -> {
+                        AppLocalDb.db.postDao().delete(postId);
+                        future.complete(true);
+                    });
                 })
                 .addOnFailureListener(e -> {
                     Log.w(Consts.TAG, "Error updating document", e);
