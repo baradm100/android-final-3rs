@@ -21,9 +21,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 public class MainActivity extends AppCompatActivity {
-    private final FirebaseAuth mAuth = FirebaseAuth.getInstance();
-    private Places p;
-
     private void initPlaces() {
         Log.d(Consts.TAG, "Was init!");
 
@@ -47,9 +44,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         initPlaces();
 
-
         setContentView(R.layout.activity_main);
-
 
         if (UserModel.instance.isLoggedIn()) {
             Log.d(Consts.TAG, "User is logged in!");

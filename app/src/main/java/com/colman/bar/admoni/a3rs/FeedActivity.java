@@ -31,7 +31,6 @@ public class FeedActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_feed);
 
-
         if (!UserModel.instance.isLoggedIn()) {
             Log.d(TAG, "User is NOT logged in!");
             Toast.makeText(FeedActivity.this, "Authentication failed.",
@@ -41,7 +40,6 @@ public class FeedActivity extends AppCompatActivity {
             startActivity(i);
             return;
         }
-
 
         mStartForResult = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),

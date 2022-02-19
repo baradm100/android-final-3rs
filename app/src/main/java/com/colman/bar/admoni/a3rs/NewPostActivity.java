@@ -330,7 +330,6 @@ public class NewPostActivity extends AppCompatActivity {
         EditText newPostPhoneEditText = findViewById(R.id.newPostPhoneEditText);
         EditText newPostAdressEditText = findViewById(R.id.newPostAdressEditText);
 
-
         if (StringsUtil.isEmpty(newPostPostTitleEditText.getText().toString())) {
             isValid = false;
             newPostPostTitleEditText.setError("Post title is a required field");
@@ -382,8 +381,6 @@ public class NewPostActivity extends AppCompatActivity {
             alert.show();
         }
 
-
         return isValid;
-
     }
 }
