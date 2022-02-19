@@ -15,10 +15,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.colman.bar.admoni.a3rs.adapters.PostAdapter;
+import com.colman.bar.admoni.a3rs.models.PostProvider;
 import com.colman.bar.admoni.a3rs.models.UserModel;
 import com.colman.bar.admoni.a3rs.providers.PostIdPair;
-import com.colman.bar.admoni.a3rs.providers.PostProvider;
-import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -92,7 +91,9 @@ public class FeedFragment extends Fragment {
                 return;
             }
 
-            postAdapter.setPosts(postPairs);
+            // Run on the UI thread to update the view
+            getActivity().runOnUiThread(() -> postAdapter.setPosts(postPairs));
+
             if (postPairs.isEmpty()) {
                 swipeRefreshLayout.setVisibility(View.GONE);
                 postsEmptySwipeRefreshLayout.setVisibility(View.VISIBLE);

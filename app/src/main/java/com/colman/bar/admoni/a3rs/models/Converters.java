@@ -25,8 +25,8 @@ public class Converters {
     @TypeConverter
     public static SerializableLatLng toSerializableLatLng(String value) {
         String[] vals = value.split(",");
-        long latitude = Long.parseLong(vals[0]);
-        long longitude = Long.parseLong(vals[1]);
+        double latitude = Double.parseDouble(vals[0]);
+        double longitude = Double.parseDouble(vals[1]);
 
         return new SerializableLatLng(new LatLng(latitude, longitude));
     }
