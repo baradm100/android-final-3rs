@@ -1,5 +1,9 @@
 package com.colman.bar.admoni.a3rs.models;
 
+import androidx.annotation.NonNull;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
+
 import com.colman.bar.admoni.a3rs.utils.Convertors;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.FieldValue;
@@ -10,7 +14,12 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+@Entity
 public class Post implements Serializable {
+    @PrimaryKey
+    @NonNull
+    private final String id;
+
     private final String title;
     private final String subTitle;
     private final String description;
@@ -20,8 +29,7 @@ public class Post implements Serializable {
     private final Date createdAt;
     private final String addressName;
     private final SerializableLatLng geoPoint;
-    private final String id;
-    private PostImage image;
+    private transient PostImage image;
 
     public static Post from(Map<String, Object> data, String id) {
         String title = getValueFromMapSafely(data, "title");
@@ -135,6 +143,14 @@ public class Post implements Serializable {
         }
         image = new PostImage(id);
         return image;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public Date getCreatedAt() {
+        return createdAt;
     }
 
     @Override
