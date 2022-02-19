@@ -27,7 +27,7 @@ import com.colman.bar.admoni.a3rs.models.Post;
 import com.colman.bar.admoni.a3rs.models.PostImage;
 import com.colman.bar.admoni.a3rs.models.SerializableLatLng;
 import com.colman.bar.admoni.a3rs.models.UserModel;
-import com.colman.bar.admoni.a3rs.providers.PostProvider;
+import com.colman.bar.admoni.a3rs.models.PostProvider;
 import com.colman.bar.admoni.a3rs.utils.StringsUtil;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.maps.model.LatLng;
