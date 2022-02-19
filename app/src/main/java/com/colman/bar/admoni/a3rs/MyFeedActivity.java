@@ -30,7 +30,6 @@ public class MyFeedActivity extends AppCompatActivity {
         Bundle myFeedBundle = new Bundle();
         myFeedBundle.putBoolean(ARG_IS_MY_FEED, true);
 
-
         // Set the normal navigation flow - but set it as my feed
         NavHostFragment finalHost = NavHostFragment.create(R.navigation.my_nav, myFeedBundle);
         getSupportFragmentManager().beginTransaction()

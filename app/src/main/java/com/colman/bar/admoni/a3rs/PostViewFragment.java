@@ -43,7 +43,6 @@ public class PostViewFragment extends Fragment {
     private ActivityResultLauncher<Intent> mStartForResult;
     MapView mMapView;
 
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

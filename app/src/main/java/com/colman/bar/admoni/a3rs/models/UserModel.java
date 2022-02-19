@@ -22,8 +22,6 @@ import java.util.concurrent.Executors;
 
 public class UserModel {
     public static final UserModel instance = new UserModel();
-    Executor executor = Executors.newFixedThreadPool(1);
-    Handler mainThread = HandlerCompat.createAsync(Looper.getMainLooper());
 
     ModelFirebase modelFirebase = new ModelFirebase();
 
